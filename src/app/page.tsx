@@ -1,69 +1,124 @@
-import Image from "next/image";
+import { redirect } from "next/navigation";
+import { AboutRow } from "@/components/about-row";
+import { Monogram } from "@/components/brand";
+import { ProjectCard } from "@/components/project-card";
+import { SayHello } from "@/components/say-hello";
+import { SiteFooter } from "@/components/site-footer";
+import { StaggerReveal } from "@/components/stagger-reveal";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { WorkGate } from "@/components/work-gate";
+import {
+  caseStudies,
+  caseStudyHref,
+  getCaseStudy,
+} from "@/lib/case-studies";
+import { hasWorkAccess } from "@/lib/work-session";
 
-export default function Home() {
+const perspective = [
+  "I run my work like it's my own business.",
+  "I build what users actually need and what\u2019s good for the business.",
+  "I like working with people who will challenge me and have fun.",
+  "I build foundations \u2013 ones that last.",
+];
+
+export default async function Home({ searchParams }: PageProps<"/">) {
+  const unlocked = await hasWorkAccess();
+  const unlock = (await searchParams).unlock;
+  const unlockSlug =
+    typeof unlock === "string" ? getCaseStudy(unlock)?.slug : undefined;
+
+  if (unlocked && unlockSlug) {
+    redirect(caseStudyHref(unlockSlug));
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <WorkGate unlocked={unlocked} initialSlug={unlockSlug}>
+      <div className="flex min-h-dvh flex-col px-6 md:px-10 xl:px-[46px]">
+        <div className="mx-auto flex w-full max-w-[1636px] flex-1 flex-col">
+          <header className="flex items-start justify-between pt-8 xl:pt-[45px]">
+            <div>
+              <Monogram className="size-12 xl:size-16" />
+              <span className="sr-only">Andy O&rsquo;Dore</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <SayHello />
+            </div>
+          </header>
+
+          <StaggerReveal className="flex flex-1 flex-col">
+            <main>
+              <h1 className="t-stagger-line text-ink font-display text-display mt-10 max-w-[9.5em] font-light text-balance xl:mt-16">
+                Great products start with curiosity and craft.
+              </h1>
+              <p className="t-stagger-line text-lede mt-4 text-base leading-snug font-light md:text-lg xl:mt-6 xl:text-2xl">
+                I build systems and foundations that let organizations scale
+                without losing either.
+              </p>
+
+              <section
+                aria-label="Selected work"
+                className="mt-10 grid grid-cols-1 gap-4 xl:mt-16 lg:grid-cols-3"
+              >
+                {caseStudies.map((study, index) => (
+                  <ProjectCard
+                    key={study.slug}
+                    study={study}
+                    priority={index === 0}
+                  />
+                ))}
+              </section>
+
+              <div className="mt-16 xl:mt-[102px]">
+                <AboutRow label="The career">
+                  <p>
+                    Currently at{" "}
+                    <strong className="font-semibold">Atlassian</strong>, I&rsquo;m
+                    setting design direction on Strategy Collection, building
+                    AI-native systems that sharpen how leaders make decisions.
+                    Before that, I spent time at{" "}
+                    <strong className="font-semibold">Instacart</strong>, growing a
+                    marketing platform from a 4-retailer pilot to $192M in
+                    attributed revenue, and at{" "}
+                    <strong className="font-semibold">Meta</strong>, envisioning
+                    career growth, hiring, and workforce planning tools used across
+                    its global workforce. Earlier still, I was at{" "}
+                    <strong className="font-semibold">Curalate</strong>, a startup,
+                    as one of the first product designers there, building the design
+                    org from the ground up as the company scaled toward acquisition.
+                    I started in branding and identity design, a foundation that
+                    still shapes how I approach every project.
+                  </p>
+                </AboutRow>
+
+                <hr className="border-rule my-10 xl:my-16" />
+
+                <AboutRow label="The perspective">
+                  <ul className="list-disc pl-[1.1em]">
+                    {perspective.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </AboutRow>
+
+                <hr className="border-rule my-10 xl:my-16" />
+
+                <AboutRow label="The fun">
+                  <p>
+                    Outside of work, you&rsquo;ll find me being a girl dad to my
+                    three daughters, swinging a golf club when I can, and telling a
+                    dad joke whether you asked for one or not.
+                  </p>
+                </AboutRow>
+              </div>
+            </main>
+
+            <div className="mt-auto pt-20 pb-10 xl:pt-[157px] xl:pb-[45px]">
+              <SiteFooter />
+            </div>
+          </StaggerReveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </WorkGate>
   );
 }

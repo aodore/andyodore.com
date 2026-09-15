@@ -1,26 +1,388 @@
 @import "tailwindcss";
 
+/* Raw palette, shared by both Figma frames (nodes 29:2651 and 33:700). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --espresso: #2a170f;
+  --cream: #fffdf4;
+  --parchment: #fcf7e6;
+  --taupe: #776660;
+  --amber: #f6be3e;
+  --amber-soft: #fbe5ab;
+  --mist: #dbd7d6;
+
+  /* Each case study's canvas and ink, split so the prev/next nav can sit in
+     this page's night colors and reveal a destination's day canvas on hover.
+     The paired light-dark() values still drive the page itself. */
+  --strategy-canvas-day: #edf7f8;
+  --strategy-canvas-night: #0f272e;
+  --strategy-ink-day: #3a7e92;
+  --strategy-ink-night: #e2f3f6;
+  --post-office-canvas-day: #fceeec;
+  --post-office-canvas-night: #2b1220;
+  --post-office-ink-day: #823d59;
+  --post-office-ink-night: #fae1dc;
+  --campaign-canvas-day: #effad8;
+  --campaign-canvas-night: #18210f;
+  --campaign-ink-day: #384b26;
+  --campaign-ink-night: #e8f4d4;
+
+  --strategy-canvas: light-dark(
+    var(--strategy-canvas-day),
+    var(--strategy-canvas-night)
+  );
+  --strategy-ink: light-dark(var(--strategy-ink-day), var(--strategy-ink-night));
+  --post-office-canvas: light-dark(
+    var(--post-office-canvas-day),
+    var(--post-office-canvas-night)
+  );
+  --post-office-ink: light-dark(
+    var(--post-office-ink-day),
+    var(--post-office-ink-night)
+  );
+  --campaign-canvas: light-dark(
+    var(--campaign-canvas-day),
+    var(--campaign-canvas-night)
+  );
+  --campaign-ink: light-dark(var(--campaign-ink-day), var(--campaign-ink-night));
+
+  /* Semantic slots. light-dark() resolves against the inherited color-scheme,
+     so the theme override below is the only switch either theme needs. */
+  color-scheme: light dark;
+
+  --canvas: light-dark(var(--cream), var(--espresso));
+  --ink: light-dark(var(--espresso), var(--parchment));
+  --muted: light-dark(var(--taupe), var(--parchment));
+  --lede: light-dark(var(--taupe), var(--amber));
+  --accent: var(--amber);
+  --rule: light-dark(var(--mist), var(--taupe));
+  --monogram-ring: light-dark(var(--amber-soft), var(--taupe));
+  --monogram-mark: light-dark(var(--amber), var(--espresso));
+
+  /* Staggered reveal (Transitions.dev). --stagger-stagger is the gap
+     between items so the cascade reads top to bottom, left to right. */
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Floating back-to-top: 40px from the viewport, matching the monogram
+     (48px, 64px from xl). Clearance is the reserved strip above the footer
+     so the control can rest there instead of covering the copyright. */
+  --back-to-top-inset: 2.5rem;
+  --back-to-top-size: 3rem;
+  --back-to-top-clearance: calc(
+    var(--back-to-top-size) + var(--back-to-top-inset) * 2
+  );
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 80rem) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --back-to-top-size: 4rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Set by the pre-paint script in the document head when a choice is stored.
+   With no class, both colors and icon follow the OS preference. */
+html.theme-light {
+  color-scheme: light;
+}
+
+html.theme-dark {
+  color-scheme: dark;
+}
+
+/* Case study palettes (Figma nodes 31:2969, 33:531, 33:38). Each project owns
+   its hue, and each hue carries a dark counterpart so the toggle works on
+   these pages too: the light column is the design's palette, the dark one
+   trades the tinted canvas for a deep version of the project's ink. Scoping
+   them to the document root via :has() rather than to a wrapper lets the body
+   background and the scrollbar pick them up. The theme classes above own
+   color-scheme, which is what light-dark() resolves against. --rule is spelled
+   out per project because the shared dark value is a warm brown that fights
+   every project hue; the accent and the monogram ring hold their pastel in
+   both, since both read against either canvas. */
+html:has([data-case-study="strategy-collection"]) {
+  --canvas: var(--strategy-canvas);
+  --ink: var(--strategy-ink);
+  --muted: var(--strategy-ink);
+  --lede: light-dark(#3a7e92, #97d9dd);
+  --accent: #97d9dd;
+  --rule: light-dark(var(--mist), #2d5a66);
+  --monogram-ring: #97d9dd;
+  --monogram-mark: light-dark(#3a7e92, #0f272e);
+  --nav-canvas: var(--strategy-canvas-night);
+  --nav-ink: var(--strategy-ink-night);
+}
+
+html:has([data-case-study="post-office"]) {
+  --canvas: var(--post-office-canvas);
+  --ink: var(--post-office-ink);
+  --muted: var(--post-office-ink);
+  --lede: light-dark(#823d59, #f4aea0);
+  --accent: #f4aea0;
+  --rule: light-dark(var(--mist), #5f2c41);
+  --monogram-ring: #f4aea0;
+  --monogram-mark: light-dark(#823d59, #2b1220);
+  --nav-canvas: var(--post-office-canvas-night);
+  --nav-ink: var(--post-office-ink-night);
+}
+
+html:has([data-case-study="campaign-manager"]) {
+  --canvas: var(--campaign-canvas);
+  --ink: var(--campaign-ink);
+  --muted: var(--campaign-ink);
+  --lede: light-dark(#384b26, #a9d750);
+  --accent: #a9d750;
+  --rule: light-dark(var(--mist), #3c5127);
+  --monogram-ring: #a9d750;
+  --monogram-mark: light-dark(#384b26, #18210f);
+  --nav-canvas: var(--campaign-canvas-night);
+  --nav-ink: var(--campaign-ink-night);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-lede: var(--lede);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+  --color-monogram-ring: var(--monogram-ring);
+  --color-monogram-mark: var(--monogram-mark);
+
+  /* Fixed regardless of theme: these sit on top of the card photos. */
+  --color-label: #fffdf5;
+  --color-tile-strategy: var(--espresso);
+  --color-tile-post-office: #cbe8ed;
+  --color-tile-campaign: #a9d750;
+}
+
+@theme {
+  /* Canela Trial is the licensed display face in the design file. Drop the real
+     web fonts in and it takes over; otherwise Cormorant Garamond Light stands in. */
+  --font-display: "Canela", "Canela Trial", var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --text-display: clamp(2.5rem, 6.6vw, 6rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.02em;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html,
+  body {
+    min-height: 100dvh;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--muted);
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background-color: var(--amber);
+    color: var(--espresso);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Rest: this page's night canvas and ink. Hover (and keyboard focus)
+     rebinds a card to the destination's day palette, so the designed
+     background of the page it leads to shows through. */
+  .project-nav {
+    --canvas: var(--nav-canvas);
+    --ink: var(--nav-ink);
+    --muted: var(--nav-ink);
+  }
+
+  .project-nav a:is(:hover, :focus-visible) .palette-strategy-collection {
+    --canvas: var(--strategy-canvas-day);
+    --ink: var(--strategy-ink-day);
+    --muted: var(--strategy-ink-day);
+  }
+
+  .project-nav a:is(:hover, :focus-visible) .palette-post-office {
+    --canvas: var(--post-office-canvas-day);
+    --ink: var(--post-office-ink-day);
+    --muted: var(--post-office-ink-day);
+  }
+
+  .project-nav a:is(:hover, :focus-visible) .palette-campaign-manager {
+    --canvas: var(--campaign-canvas-day);
+    --ink: var(--campaign-ink-day);
+    --muted: var(--campaign-ink-day);
+  }
+
+  /* The toggle renders both faces and lets CSS pick one, so the correct icon is
+     in the first paint rather than after hydration. Colors come from
+     light-dark(), but no selector can read a color-scheme, so the icon swap
+     needs the media query and class spelled out. */
+  .theme-face-moon {
+    display: block;
+  }
+
+  .theme-face-sun {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not(.theme-light) .theme-face-moon {
+      display: none;
+    }
+
+    html:not(.theme-light) .theme-face-sun {
+      display: block;
+    }
+  }
+
+  html.theme-dark .theme-face-moon {
+    display: none;
+  }
+
+  html.theme-dark .theme-face-sun {
+    display: block;
+  }
+
+  /* Items start translated down + blurred + invisible when nested in a
+     .t-stagger that hasn't been shown yet; .is-shown flips them to rest.
+     --stagger-i is the document-order index so the cascade reads top to
+     bottom, left to right. .is-hiding fades them out in place over 200ms,
+     independent of the entrance stagger so the exit doesn't replay it.
+     Hidden styles live on the parent so a .t-stagger-line outside a
+     stagger root stays visible. */
+  .t-stagger-line {
+    transition:
+      opacity var(--stagger-dur) var(--stagger-ease),
+      transform var(--stagger-dur) var(--stagger-ease),
+      filter var(--stagger-dur) var(--stagger-ease);
+    transition-delay: calc(var(--stagger-i, 0) * var(--stagger-stagger));
+    will-change: transform, opacity, filter;
+  }
+
+  .t-stagger:not(.is-shown):not(.is-hiding) .t-stagger-line {
+    opacity: 0;
+    transform: translateY(var(--stagger-distance));
+    filter: blur(var(--stagger-blur));
+  }
+
+  .t-stagger.is-hiding .t-stagger-line {
+    opacity: 0;
+    transform: translateY(0);
+    filter: blur(0);
+    transition:
+      opacity 200ms ease,
+      transform 0s linear,
+      filter 0s linear;
+    transition-delay: 0s;
+  }
+
+  /* Native <dialog> fills the viewport so a click on the dimmed field is a
+     click on the dialog itself; the panel inside is the card. UA chrome is
+     reset, then the canvas, radius, and stagger-like entrance take over. */
+  .password-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 1rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    color-scheme: inherit;
+  }
+
+  .password-dialog:focus {
+    outline: none;
+  }
+
+  .password-dialog[open] {
+    display: grid;
+    place-items: center;
+  }
+
+  .password-dialog::backdrop {
+    background: color-mix(in oklab, var(--ink) 42%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .password-dialog[open] .password-dialog-panel {
+    animation: password-dialog-in var(--stagger-dur) var(--stagger-ease);
+  }
+
+  .password-dialog[open]::backdrop {
+    animation: password-dialog-backdrop-in 280ms ease;
+  }
+
+  .password-field-error {
+    animation: password-field-shake 420ms var(--stagger-ease);
+  }
+
+  @keyframes password-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--stagger-distance));
+      filter: blur(var(--stagger-blur));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @keyframes password-dialog-backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes password-field-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-6px);
+    }
+    75% {
+      transform: translateX(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .t-stagger-line {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none !important;
+    }
+
+    .password-dialog[open] .password-dialog-panel,
+    .password-dialog[open]::backdrop,
+    .password-field-error {
+      animation: none;
+    }
+  }
+}
+
+/* Unlayered so it beats the control's opacity utility. The button is fixed
+   and would otherwise sit on top of the dimmed field. */
+body:has(dialog[open]) .back-to-top {
+  opacity: 0;
+  pointer-events: none;
 }
