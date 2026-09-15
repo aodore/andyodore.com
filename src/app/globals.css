@@ -206,6 +206,15 @@ html:has([data-case-study="campaign-manager"]) {
     --muted: var(--nav-ink);
   }
 
+  /* Night canvas on a night page erases the pill edge; a hairline of this
+     page's ink brings it back. light-dark() keeps light mode unstroked,
+     where the dark rest fill already sits on a day canvas. --nav-ink holds
+     through hover so the stroke doesn't flip to the destination's day ink. */
+  .project-nav a figure {
+    box-shadow: inset 0 0 0 1px
+      light-dark(transparent, color-mix(in oklab, var(--nav-ink) 42%, transparent));
+  }
+
   .project-nav a:is(:hover, :focus-visible) .palette-strategy-collection {
     --canvas: var(--strategy-canvas-day);
     --ink: var(--strategy-ink-day);
