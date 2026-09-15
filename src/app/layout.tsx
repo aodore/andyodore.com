@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { BackToTop } from "@/components/back-to-top";
 import { SoundCues } from "@/components/sound-cues";
 import { personJsonLd, siteDescription, siteName, siteUrl } from "@/lib/site";
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <BackToTop />
         <SoundCues />
+        <Analytics />
       </body>
     </html>
   );
