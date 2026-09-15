@@ -22,16 +22,26 @@ export function StaggerReveal({
       item.style.setProperty("--stagger-i", String(i));
     });
 
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      el.classList.add("is-shown");
+    };
+
+    // Two frames so the hidden state paints first. A timeout covers tabs
+    // where requestAnimationFrame never runs (background, some previews),
+    // which would otherwise leave the page blank except the header.
     let inner = 0;
     const outer = requestAnimationFrame(() => {
-      inner = requestAnimationFrame(() => {
-        el.classList.add("is-shown");
-      });
+      inner = requestAnimationFrame(show);
     });
+    const fallback = window.setTimeout(show, 80);
 
     return () => {
       cancelAnimationFrame(outer);
       cancelAnimationFrame(inner);
+      window.clearTimeout(fallback);
     };
   }, []);
 

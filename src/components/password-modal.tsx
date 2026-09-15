@@ -146,7 +146,7 @@ function PasswordForm({
         id="work-password-copy"
         className="text-lede mt-4 text-base leading-snug font-light md:text-lg"
       >
-        Ask me for the password. One unlock opens all three case studies.
+        Ask me for the password.
       </p>
 
       <label

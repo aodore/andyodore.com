@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useWorkGate } from "@/components/work-gate";
 import { caseStudyHref, type CaseStudySlug } from "@/lib/case-studies";
+import { isGatedWorkSlug } from "@/lib/gated-work";
 import { linkCues } from "@/lib/sound";
 
-/** Same link the card used to be; intercepts a plain click while the work is
-    still locked so the password dialog can open instead of navigating. */
+/** Same link the card used to be; intercepts a plain click on gated work so
+    the password dialog can open instead of navigating. Campaign Manager is
+    public and goes through. */
 export function WorkLink({
   slug,
   children,
@@ -23,7 +25,7 @@ export function WorkLink({
       className="t-stagger-line group block rounded-3xl"
       {...linkCues}
       onClick={(event) => {
-        if (unlocked) return;
+        if (unlocked || !isGatedWorkSlug(slug)) return;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
           return;
         }

@@ -15,6 +15,7 @@ import {
   type CaseStudy,
   type CaseStudySlug,
 } from "@/lib/case-studies";
+import { isGatedWorkSlug } from "@/lib/gated-work";
 
 type WorkGateValue = {
   unlocked: boolean;
@@ -46,7 +47,7 @@ export function WorkGate({
 
   const requestUnlock = useCallback(
     (slug: CaseStudySlug) => {
-      if (unlocked) return;
+      if (unlocked || !isGatedWorkSlug(slug)) return;
       const next = getCaseStudy(slug);
       if (next) setStudy(next);
     },

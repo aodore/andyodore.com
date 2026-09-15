@@ -12,6 +12,7 @@ import {
   caseStudyHref,
   getCaseStudy,
 } from "@/lib/case-studies";
+import { isGatedWorkSlug } from "@/lib/gated-work";
 import { hasWorkAccess } from "@/lib/work-session";
 
 const perspective = [
@@ -24,8 +25,10 @@ const perspective = [
 export default async function Home({ searchParams }: PageProps<"/">) {
   const unlocked = await hasWorkAccess();
   const unlock = (await searchParams).unlock;
+  const requested =
+    typeof unlock === "string" ? getCaseStudy(unlock) : undefined;
   const unlockSlug =
-    typeof unlock === "string" ? getCaseStudy(unlock)?.slug : undefined;
+    requested && isGatedWorkSlug(requested.slug) ? requested.slug : undefined;
 
   if (unlocked && unlockSlug) {
     redirect(caseStudyHref(unlockSlug));

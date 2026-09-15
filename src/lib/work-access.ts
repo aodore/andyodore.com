@@ -51,12 +51,3 @@ export async function passwordUnlocksWork(candidate: string) {
   );
 }
 
-const WORK_SLUGS = new Set([
-  "strategy-collection",
-  "post-office",
-  "campaign-manager",
-]);
-
-export function isWorkSlug(value: string) {
-  return WORK_SLUGS.has(value);
-}
