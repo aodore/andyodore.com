@@ -81,17 +81,22 @@ export default async function CaseStudyPage({
                   <AboutRow label={section.label}>
                     <p>{section.body}</p>
                   </AboutRow>
-                  {section.image && (
-                    <figure className="t-stagger-line relative isolate aspect-[1636/866] overflow-hidden rounded-3xl">
+                  {section.images?.map((shot) => (
+                    <figure
+                      key={shot.src}
+                      className="t-stagger-line overflow-hidden rounded-3xl"
+                    >
                       <Image
-                        src={section.image.src}
-                        alt={section.image.alt}
-                        fill
+                        src={shot.src}
+                        alt={shot.alt}
+                        width={shot.width ?? 1636}
+                        height={shot.height ?? 866}
                         sizes="(min-width: 1728px) 1636px, 100vw"
-                        className="object-cover"
+                        quality={90}
+                        className="h-auto w-full"
                       />
                     </figure>
-                  )}
+                  ))}
                 </Fragment>
               ))}
             </div>

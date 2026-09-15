@@ -9,13 +9,15 @@ export type CaseStudyShot = {
   src: string;
   /** Written here rather than taken from the design, which carries no alt text. */
   alt: string;
+  width?: number;
+  height?: number;
 };
 
 export type CaseStudySection = {
   label: string;
   body: string;
-  /** Screenshot below the copy. The closing section has none, by design. */
-  image?: CaseStudyShot;
+  /** Screenshots below the copy. The closing section has none, by design. */
+  images?: CaseStudyShot[];
 };
 
 /** Named separately because a case study reuses its shots across sections. */
@@ -37,12 +39,52 @@ const shots = {
     alt: "The same Spotlight onboarding message on a tablet, stepping through getting started.",
   },
   campaignTablet: {
-    src: "/images/campaign-manager-tablet.webp",
-    alt: "The Instacart campaign builder on a tablet, on the step where a retailer configures an offer.",
+    src: "/images/campaign-manager-create.webp",
+    alt: "The Instacart campaign builder on the create step, with cards for acquire, grow basket, and win-back objectives, and a phone preview of the storefront.",
+    width: 3272,
+    height: 1732,
   },
-  campaignLaptop: {
-    src: "/images/campaign-manager-laptop.webp",
-    alt: "The Instacart campaign builder on a laptop, showing offer setup with earning conditions.",
+  campaignName: {
+    src: "/images/campaign-manager-name.webp",
+    alt: "The Instacart campaign builder naming a draft campaign and setting its goal, schedule, targeting, and offer.",
+    width: 3272,
+    height: 3026,
+  },
+  campaignTargeting: {
+    src: "/images/campaign-manager-targeting.webp",
+    alt: "The Instacart campaign builder with targeting open, showing a non-loyalty customer segment covering 50% of shoppers.",
+    width: 3272,
+    height: 2774,
+  },
+  campaignStorefront: {
+    src: "/images/campaign-manager-storefront.webp",
+    alt: "A live storefront editor with the mobile preview open and an Add Section menu for categories, collection, banner, and display unit.",
+    width: 3272,
+    height: 1788,
+  },
+  campaignBanner: {
+    src: "/images/campaign-manager-banner.webp",
+    alt: "The storefront editor with a banner selected on the mobile preview and its image, type, and lookup settings in the side panel.",
+    width: 3272,
+    height: 1788,
+  },
+  campaignPromote: {
+    src: "/images/campaign-manager-promote.webp",
+    alt: "A collage of campaign promotion placements, grocery ads, offer setup, targeting rules, and customer-match summaries.",
+    width: 3272,
+    height: 3476,
+  },
+  campaignOffer: {
+    src: "/images/campaign-manager-offer.webp",
+    alt: "The campaign builder Offer step, with shortcut rewards, earning conditions, and redemption rules for a loyalty campaign.",
+    width: 3272,
+    height: 3602,
+  },
+  campaignInsights: {
+    src: "/images/campaign-manager-insights.webp",
+    alt: "Brand overview insights showing Instacart performance, category mix, products in active campaigns, and page metrics.",
+    width: 3272,
+    height: 4510,
   },
 } satisfies Record<string, CaseStudyShot>;
 
@@ -87,19 +129,19 @@ export const caseStudies: CaseStudy[] = [
         label: "The initial direction",
         body:
           "Before Strategic Intelligence, leaders had no actionable, intelligent way to sense and steer their business. We started with a ‘For You’ page with three layers—Portfolio Health, Execution Feed, Active Tasks—each surfacing signals for Executives who need visibility, Buyers who own the operating cadence, and Contributors who input the signals. We embedded Rovo throughout, treating AI as intelligence woven into the insight layer.",
-        image: shots.strategyTablet,
+        images: [shots.strategyTablet],
       },
       {
         label: "The insight",
         body:
           "But the early signals revealed the real problem: leaders don’t need more data, they need better questions. A dashboard—even an AI-informed one—still asks users to hunt. That gap led us to pivot.",
-        image: shots.strategyPhone,
+        images: [shots.strategyPhone],
       },
       {
         label: "The new direction",
         body:
           "We rebuilt as an agent-first, chat-led interface where Rovo becomes the decision partner—surfacing the right signals to the right person at the right moment. Critically, we grounded intelligence in our teamwork graph data and built pathways for users to understand how signals were gathered, ensuring trust over black-box AI. For Executives: faster sensemaking. For Buyers: a trusted compass for running business rhythm. For Contributors: their inputs become visible impact.",
-        image: shots.strategyTablet,
+        images: [shots.strategyTablet],
       },
       {
         label: "The outcome",
@@ -125,19 +167,19 @@ export const caseStudies: CaseStudy[] = [
         label: "The opportunity",
         body:
           "Atlassian sends millions of in-product messages across its system of work, but with no coherent strategy. Teams built messaging from scratch, resulting in fragmented designs, message fatigue, and inconsistent experiences. Post Office was created to fix this: a centralized platform for orchestrating messaging across all channels (in-product, email, chat, push). My role was to lead Courier, Post Office’s pattern library—the foundational components and guidance that would enable teams to send the right message at the right time.",
-        image: shots.postOfficeLaptop,
+        images: [shots.postOfficeLaptop],
       },
       {
         label: "The spotlight challenge",
         body:
           "For 10+ years, @atlaskit/onboarding—the ‘purple box’—was Atlassian’s onboarding component. It was failing: 75% dismissal rate, teams building custom workarounds, and technically impossible to modernize. Rather than patch it, we built new. I embedded directly with ADS for a sprint. We aligned on governance early—shared design commitment, clear documentation, owned pilots. That foundation shaped everything.",
-        image: shots.postOfficeTablet,
+        images: [shots.postOfficeTablet],
       },
       {
         label: "Our rigor",
         body:
           "We built @atlaskit/spotlight with composability at its core and encoded accessibility into the foundation. The design was intentional: it encouraged single-step messages by default, kept tours short, and pushed teams toward more disciplined usage patterns. Controlled rollouts let us measure impact in real products—and when Trello’s metrics dipped, they were able to customize the component without needing workarounds. That composability proved the design thesis: a well-architected component enables teams to adapt without abandoning consistency.",
-        image: shots.postOfficeLaptop,
+        images: [shots.postOfficeLaptop],
       },
       {
         label: "The outcome",
@@ -164,25 +206,25 @@ export const caseStudies: CaseStudy[] = [
         label: "The problem",
         body:
           "Before, Instacart’s marketing tooling was limited and not self-serve. Retailers who wanted to run campaigns had to rely on managed services or manual processes—slow, expensive, and inflexible.",
-        image: shots.campaignTablet,
+        images: [shots.campaignTablet],
       },
       {
         label: "Why it mattered",
         body:
           "Retailers couldn’t move fast on seasonal moments or test ideas. We were leaving money on the table and blocking a major revenue stream for the business.",
-        image: shots.campaignLaptop,
+        images: [shots.campaignName, shots.campaignTargeting],
       },
       {
         label: "Our approach",
         body:
           "We designed a self-serve campaign builder that let retailers create and launch campaigns directly on their Marketplace storefront or white-label site—no middleman, no delays.",
-        image: shots.campaignTablet,
+        images: [shots.campaignStorefront, shots.campaignBanner, shots.campaignPromote],
       },
       {
         label: "The solution",
         body:
           "The tool surfaces key business goals (acquire customers, win back lapsed shoppers, drive category adoption) and guides retailers through building, targeting, and tracking campaigns. Embedded insights show performance metrics in real time.",
-        image: shots.campaignLaptop,
+        images: [shots.campaignOffer, shots.campaignInsights],
       },
       {
         label: "The outcome",
