@@ -61,7 +61,7 @@ export default async function CaseStudyPage({
 
         <StaggerReveal key={study.slug} className="flex flex-1 flex-col">
           <main>
-            <h1 className="t-stagger-line text-ink font-display text-display mt-10 font-light text-balance xl:mt-16">
+            <h1 className="t-stagger-line text-ink font-display text-display mt-10 font-thin text-balance xl:mt-16">
               {study.title}
             </h1>
             {/* leading-none at xl matches the design's 24/24 single line; the

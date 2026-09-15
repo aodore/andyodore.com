@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import { BackToTop } from "@/components/back-to-top";
 import { SoundCues } from "@/components/sound-cues";
 import { personJsonLd, siteDescription, siteName, siteUrl } from "@/lib/site";
@@ -12,12 +13,13 @@ const geist = Geist({
   display: "swap",
 });
 
-// Stand-in for Canela Trial, which is a licensed face and cannot be fetched here.
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300"],
+const canela = localFont({
+  src: "../fonts/Canela-Thin-Web.woff2",
+  variable: "--font-canela",
+  weight: "100",
   display: "swap",
+  fallback: ["Georgia", "Times New Roman", "serif"],
+  adjustFontFallback: "Times New Roman",
 });
 
 export const metadata: Metadata = {
@@ -61,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${cormorant.variable}`}
+      className={`${geist.variable} ${canela.variable}`}
       // themeScript adds a theme class here before React hydrates.
       suppressHydrationWarning
     >

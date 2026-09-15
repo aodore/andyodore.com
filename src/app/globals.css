@@ -156,18 +156,25 @@ html:has([data-case-study="campaign-manager"]) {
   --color-tile-strategy: var(--espresso);
   --color-tile-post-office: #cbe8ed;
   --color-tile-campaign: #a9d750;
+
+  /* next/font variables have to be inline so the utility is a single var(). */
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-canela);
 }
 
 @theme {
-  /* Canela Trial is the licensed display face in the design file. Drop the real
-     web fonts in and it takes over; otherwise Cormorant Garamond Light stands in. */
-  --font-display: "Canela", "Canela Trial", var(--font-cormorant), Georgia, serif;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-
   --text-display: clamp(2.5rem, 6.6vw, 6rem);
   --text-display--line-height: 0.98;
   --text-display--letter-spacing: -0.02em;
 }
+
+/*
+  This font software is the property of Commercial Type.
+  You may not modify the font software, use it on another website, or install it on a computer.
+  License information is available at http://commercialtype.com/eula
+  Copyright (C) 2026 Schwartzco Inc.
+  License 2609-VPLXWR
+*/
 
 @layer base {
   html {

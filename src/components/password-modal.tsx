@@ -138,7 +138,7 @@ function PasswordForm({
 
       <h2
         id="work-password-title"
-        className="text-ink font-display mt-8 text-[2rem] leading-[1.05] font-light text-balance md:text-[2.5rem]"
+        className="text-ink font-display mt-8 text-[2rem] leading-[1.05] font-thin text-balance md:text-[2.5rem]"
       >
         This work is for the curious.
       </h2>

@@ -48,7 +48,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
           <StaggerReveal className="flex flex-1 flex-col">
             <main>
-              <h1 className="t-stagger-line text-ink font-display text-display mt-10 max-w-[9.5em] font-light text-balance xl:mt-16">
+              <h1 className="t-stagger-line text-ink font-display text-display mt-10 max-w-[9.5em] font-thin text-balance xl:mt-16">
                 Great products start with curiosity and craft.
               </h1>
               <p className="t-stagger-line text-lede mt-4 text-base leading-snug font-light md:text-lg xl:mt-6 xl:text-2xl">
