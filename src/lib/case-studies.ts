@@ -242,3 +242,8 @@ export function caseStudyHref(slug: CaseStudySlug) {
 export function getCaseStudy(slug: string) {
   return caseStudies.find((study) => study.slug === slug);
 }
+
+/** Document order, including repeats, so the lightbox walks the page. */
+export function caseStudyShots(study: CaseStudy) {
+  return study.sections.flatMap((section) => section.images ?? []);
+}

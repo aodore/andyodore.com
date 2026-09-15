@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { AboutRow } from "@/components/about-row";
 import { HomeLink } from "@/components/home-link";
 import { ProjectNav } from "@/components/project-nav";
 import { SayHello } from "@/components/say-hello";
+import { ShotLightbox, ShotTrigger } from "@/components/shot-lightbox";
 import { SiteFooter } from "@/components/site-footer";
 import { StaggerReveal } from "@/components/stagger-reveal";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { caseStudies, getCaseStudy } from "@/lib/case-studies";
+import {
+  caseStudies,
+  caseStudyShots,
+  getCaseStudy,
+} from "@/lib/case-studies";
 
 export function generateStaticParams() {
   return caseStudies.map(({ slug }) => ({ slug }));
@@ -75,31 +79,30 @@ export default async function CaseStudyPage({
             {/* The design spaces copy and screenshots evenly, so one gap covers
                 both the run between a section and its shot and the run to the
                 next section. */}
-            <div className="mt-10 flex flex-col gap-10 xl:mt-16 xl:gap-16">
-              {study.sections.map((section) => (
-                <Fragment key={section.label}>
-                  <AboutRow label={section.label}>
-                    <p>{section.body}</p>
-                  </AboutRow>
-                  {section.images?.map((shot) => (
-                    <figure
-                      key={shot.src}
-                      className="t-stagger-line overflow-hidden rounded-3xl"
-                    >
-                      <Image
-                        src={shot.src}
-                        alt={shot.alt}
-                        width={shot.width ?? 1636}
-                        height={shot.height ?? 866}
-                        sizes="(min-width: 1728px) 1636px, 100vw"
-                        quality={90}
-                        className="h-auto w-full"
-                      />
-                    </figure>
-                  ))}
-                </Fragment>
-              ))}
-            </div>
+            <ShotLightbox shots={caseStudyShots(study)}>
+              <div className="mt-10 flex flex-col gap-10 xl:mt-16 xl:gap-16">
+                {(() => {
+                  let shotIndex = 0;
+                  return study.sections.map((section) => (
+                    <Fragment key={section.label}>
+                      <AboutRow label={section.label}>
+                        <p>{section.body}</p>
+                      </AboutRow>
+                      {section.images?.map((shot) => {
+                        const index = shotIndex++;
+                        return (
+                          <ShotTrigger
+                            key={`${section.label}-${index}`}
+                            shot={shot}
+                            index={index}
+                          />
+                        );
+                      })}
+                    </Fragment>
+                  ));
+                })()}
+              </div>
+            </ShotLightbox>
 
             <div className="mt-20 xl:mt-[200px]">
               <ProjectNav previous={study.previous} next={study.next} />
