@@ -33,18 +33,18 @@ export function ThemeToggle() {
       className="text-ink hover:bg-ink/8 group relative grid size-8 cursor-pointer place-items-center rounded-full transition-colors"
       {...quietCues}
     >
-      <MoonIcon className="theme-face-moon text-muted size-4" />
       <SunIcon className="theme-face-sun size-4" />
-      <span className="theme-face-moon sr-only">Switch to dark theme</span>
-      <span className="theme-face-sun sr-only">Switch to light theme</span>
+      <MoonIcon className="theme-face-moon text-muted size-4" />
+      <span className="theme-face-sun sr-only">Switch to dark theme</span>
+      <span className="theme-face-moon sr-only">Switch to light theme</span>
       {/* Flavor text only. The sr-only labels above stay the accessible name,
           so screen readers and voice control get the actual action. */}
       <span
         aria-hidden
         className="bg-ink text-canvas pointer-events-none absolute top-full left-1/2 mt-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
       >
-        <span className="theme-face-moon">Nighty night</span>
-        <span className="theme-face-sun">Wake me up</span>
+        <span className="theme-face-sun">Nighty night</span>
+        <span className="theme-face-moon">Wake me up</span>
       </span>
     </button>
   );

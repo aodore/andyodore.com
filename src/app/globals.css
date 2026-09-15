@@ -236,31 +236,57 @@ html:has([data-case-study="campaign-manager"]) {
   /* The toggle renders both faces and lets CSS pick one, so the correct icon is
      in the first paint rather than after hydration. Colors come from
      light-dark(), but no selector can read a color-scheme, so the icon swap
-     needs the media query and class spelled out. */
-  .theme-face-moon {
+     needs the media query and class spelled out. Resting face matches the
+     current theme; hover/focus previews the destination. Scoped to the SVGs
+     so labels and the tooltip stay on the action, not the preview. */
+  .theme-face-sun {
     display: block;
   }
 
-  .theme-face-sun {
+  .theme-face-moon {
     display: none;
+  }
+
+  button:is(:hover, :focus-visible) > svg.theme-face-sun {
+    display: none;
+  }
+
+  button:is(:hover, :focus-visible) > svg.theme-face-moon {
+    display: block;
   }
 
   @media (prefers-color-scheme: dark) {
-    html:not(.theme-light) .theme-face-moon {
+    html:not(.theme-light) .theme-face-sun {
       display: none;
     }
 
-    html:not(.theme-light) .theme-face-sun {
+    html:not(.theme-light) .theme-face-moon {
       display: block;
+    }
+
+    html:not(.theme-light) button:is(:hover, :focus-visible) > svg.theme-face-sun {
+      display: block;
+    }
+
+    html:not(.theme-light) button:is(:hover, :focus-visible) > svg.theme-face-moon {
+      display: none;
     }
   }
 
-  html.theme-dark .theme-face-moon {
+  html.theme-dark .theme-face-sun {
     display: none;
   }
 
-  html.theme-dark .theme-face-sun {
+  html.theme-dark .theme-face-moon {
     display: block;
+  }
+
+  html.theme-dark button:is(:hover, :focus-visible) > svg.theme-face-sun {
+    display: block;
+  }
+
+  html.theme-dark button:is(:hover, :focus-visible) > svg.theme-face-moon {
+    display: none;
   }
 
   /* Items start translated down + blurred + invisible when nested in a
