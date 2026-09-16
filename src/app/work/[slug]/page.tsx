@@ -5,6 +5,7 @@ import { AboutRow } from "@/components/about-row";
 import { HomeLink } from "@/components/home-link";
 import { ProjectNav } from "@/components/project-nav";
 import { SayHello } from "@/components/say-hello";
+import { StudyCycle } from "@/components/study-cycle";
 import { ShotLightbox, ShotTrigger } from "@/components/shot-lightbox";
 import { SiteFooter } from "@/components/site-footer";
 import { StaggerReveal } from "@/components/stagger-reveal";
@@ -65,9 +66,12 @@ export default async function CaseStudyPage({
 
         <StaggerReveal key={study.slug} className="flex flex-1 flex-col">
           <main>
-            <h1 className="t-stagger-line text-ink font-display text-display mt-10 font-thin text-balance xl:mt-16">
-              {study.title}
-            </h1>
+            <div className="t-stagger-line mt-10 flex items-center justify-between gap-6 xl:mt-16">
+              <h1 className="text-ink font-display text-display min-w-0 font-thin text-balance">
+                {study.title}
+              </h1>
+              <StudyCycle previous={study.previous} next={study.next} />
+            </div>
             {/* leading-none at xl matches the design's 24/24 single line; the
                 looser value keeps it readable if it wraps on a narrow screen. */}
             <p className="t-stagger-line text-lede mt-3 text-base leading-snug font-light md:text-lg xl:mt-6 xl:text-2xl xl:leading-none">
