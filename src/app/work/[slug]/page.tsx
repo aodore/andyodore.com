@@ -91,17 +91,43 @@ export default async function CaseStudyPage({
                           index={shotIndex++}
                         />
                       )}
+                      {study.heroClip && (
+                        <ShotTrigger
+                          shot={study.heroClip}
+                          index={shotIndex++}
+                        />
+                      )}
                       {study.sections.map((section) => (
                         <Fragment key={section.label}>
                           <AboutRow label={section.label}>
                             <p>{section.body}</p>
                           </AboutRow>
-                          {section.images?.map((shot) => {
+                          {section.images?.map((item) => {
+                            if (Array.isArray(item)) {
+                              const start = shotIndex;
+                              return (
+                                <div
+                                  key={`${section.label}-row-${start}`}
+                                  className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:gap-4"
+                                >
+                                  {item.map((shot) => {
+                                    const index = shotIndex++;
+                                    return (
+                                      <ShotTrigger
+                                        key={`${section.label}-${index}`}
+                                        shot={shot}
+                                        index={index}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              );
+                            }
                             const index = shotIndex++;
                             return (
                               <ShotTrigger
                                 key={`${section.label}-${index}`}
-                                shot={shot}
+                                shot={item}
                                 index={index}
                               />
                             );

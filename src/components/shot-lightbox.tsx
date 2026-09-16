@@ -53,6 +53,10 @@ const SLIDE_MS = 480;
 const LIFT_MS = 560;
 const DRAG_PX = 48;
 
+function isVideoShot(shot: CaseStudyShot) {
+  return shot.kind === "video";
+}
+
 function destRect(img: HTMLElement) {
   const previous = img.style.transform;
   img.style.transform = "none";
@@ -235,7 +239,7 @@ export function ShotLightbox({
       {children}
       <dialog
         ref={dialog}
-        aria-label="Case study images"
+        aria-label="Case study media"
         className={`shot-dialog is-${presence}`}
         style={
           {
@@ -298,26 +302,82 @@ export function ShotTrigger({
   index: number;
 }) {
   const { openAt, openIndex } = useContext(OpenShot);
+  const video = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+  const open = openIndex === index;
+
+  useEffect(() => {
+    const node = video.current;
+    if (!node) return;
+    if (open || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      node.pause();
+      return;
+    }
+    void node.play().catch(() => {});
+  }, [open]);
+
+  function openFrom(element: HTMLElement) {
+    const rect = element.getBoundingClientRect();
+    openAt(index, {
+      x: rect.left,
+      y: rect.top,
+      w: rect.width,
+      h: rect.height,
+    });
+  }
+
+  if (isVideoShot(shot)) {
+    return (
+      <figure
+        className={`t-stagger-line relative overflow-hidden rounded-3xl${
+          open ? " invisible" : ""
+        }`}
+      >
+        <video
+          ref={video}
+          src={shot.src}
+          width={shot.width}
+          height={shot.height}
+          autoPlay
+          muted={muted}
+          loop
+          playsInline
+          preload="metadata"
+          className="h-auto w-full cursor-zoom-in"
+          aria-label={`View film ${index + 1}: ${shot.alt}`}
+          onClick={(event) => openFrom(event.currentTarget)}
+        />
+        <button
+          type="button"
+          aria-label={muted ? "Unmute" : "Mute"}
+          className="shot-dialog-control absolute bottom-4 left-4 z-10"
+          onClick={() => {
+            const node = video.current;
+            const next = !muted;
+            setMuted(next);
+            if (node) {
+              node.muted = next;
+              if (!next) void node.play().catch(() => {});
+            }
+          }}
+        >
+          <SpeakerIcon off={muted} className="size-4" />
+        </button>
+      </figure>
+    );
+  }
 
   return (
     <figure
       className={`t-stagger-line overflow-hidden rounded-3xl${
-        openIndex === index ? " invisible" : ""
+        open ? " invisible" : ""
       }`}
     >
       <button
         type="button"
         aria-label={`View image ${index + 1}: ${shot.alt}`}
         className="block w-full cursor-zoom-in"
-        onClick={(event) => {
-          const rect = event.currentTarget.getBoundingClientRect();
-          openAt(index, {
-            x: rect.left,
-            y: rect.top,
-            w: rect.width,
-            h: rect.height,
-          });
-        }}
+        onClick={(event) => openFrom(event.currentTarget)}
       >
         <ShotImage shot={shot} className="h-auto w-full" />
       </button>
@@ -333,8 +393,26 @@ function ShotImage({
 }: {
   shot: CaseStudyShot;
   className?: string;
-  onReady?: (img: HTMLImageElement) => void;
+  onReady?: (el: HTMLImageElement | HTMLVideoElement) => void;
 } & Omit<ComponentProps<typeof Image>, "src" | "alt" | "width" | "height">) {
+  if (isVideoShot(shot)) {
+    return (
+      <video
+        src={shot.src}
+        width={shot.width}
+        height={shot.height}
+        autoPlay
+        muted
+        loop
+        playsInline
+        controls
+        className={className}
+        aria-label={shot.alt}
+        onLoadedData={(event) => onReady?.(event.currentTarget)}
+      />
+    );
+  }
+
   return (
     <Image
       src={shot.src}
@@ -406,7 +484,7 @@ function ShotFrame({
 
   const many = total > 1;
   const sliding = leaving !== null;
-  const grab = many && canDrag && phase === "idle";
+  const grab = many && canDrag && phase === "idle" && !isVideoShot(shot);
 
   function closeFromField(event: React.MouseEvent<HTMLElement>) {
     if (event.target === event.currentTarget) onClose();
@@ -482,7 +560,7 @@ function ShotFrame({
     ? [
         shots[(index + 1) % total],
         shots[(index - 1 + total) % total],
-      ]
+      ].filter((item) => !isVideoShot(item))
     : [];
 
   return (
@@ -635,8 +713,8 @@ function ShotPane({
               onPointerCancel={onHeroPointerUp}
               onReady={
                 onField
-                  ? (img) => {
-                      const background = sampleImageField(img);
+                  ? (el) => {
+                      const background = sampleImageField(el);
                       if (background) {
                         onField({ background, chrome: chromeOn(background) });
                       }
@@ -653,9 +731,13 @@ function ShotPane({
 
 /** Most common color on the shot's edge, so the lightbox field matches the
     image instead of the page canvas. */
-function sampleImageField(img: HTMLImageElement): string | null {
-  const width = img.naturalWidth;
-  const height = img.naturalHeight;
+function sampleImageField(
+  img: HTMLImageElement | HTMLVideoElement,
+): string | null {
+  const width =
+    img instanceof HTMLVideoElement ? img.videoWidth : img.naturalWidth;
+  const height =
+    img instanceof HTMLVideoElement ? img.videoHeight : img.naturalHeight;
   if (!width || !height) return null;
 
   const canvas = document.createElement("canvas");
@@ -729,6 +811,31 @@ function ChevronIcon(props: React.SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M15 5l-7 7 7 7" />
+    </svg>
+  );
+}
+
+function SpeakerIcon({
+  off,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { off?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <path d="M11 5L6 9H3v6h3l5 4V5z" />
+      {off ? (
+        <path d="M16 9l5 6M21 9l-5 6" />
+      ) : (
+        <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+      )}
     </svg>
   );
 }

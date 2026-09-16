@@ -11,13 +11,14 @@ export type CaseStudyShot = {
   alt: string;
   width?: number;
   height?: number;
+  kind?: "image" | "video";
 };
 
 export type CaseStudySection = {
   label: string;
   body: string;
-  /** Screenshots below the copy. The closing section has none, by design. */
-  images?: CaseStudyShot[];
+  /** Screenshots below the copy. A nested array is a row of shots. */
+  images?: Array<CaseStudyShot | CaseStudyShot[]>;
 };
 
 /** Named separately because a case study reuses its shots across sections. */
@@ -26,9 +27,71 @@ const shots = {
     src: "/images/strategy-collection-tablet.webp",
     alt: "Strategy Collection on a tablet, showing a portfolio summary alongside budget, cross-product, and OKR panels.",
   },
-  strategyPhone: {
-    src: "/images/strategy-collection-phone.webp",
-    alt: "Strategy Collection on a phone, showing the portfolio summary and a queue of suggested actions.",
+  strategyBriefingStand: {
+    src: "/images/strategy-collection-briefing-stand.webp",
+    alt: "A Strategic Intelligence briefing for Veronica, with a Rovo summary of lagging focus areas, insight cards, and stacked dashboards.",
+    width: 3272,
+    height: 4192,
+  },
+  strategyBriefingHeadline: {
+    src: "/images/strategy-collection-briefing-headline.webp",
+    alt: "A briefing titled ARR on track, three areas behind, with insights, latest updates, and a What’s next list.",
+    width: 3272,
+    height: 4192,
+  },
+  strategyBriefingWeekly: {
+    src: "/images/strategy-collection-briefing-weekly.webp",
+    alt: "A weekly briefing with a yellow header, insight cards, dashboard tiles, and a What’s next timeline.",
+    width: 3272,
+    height: 4192,
+  },
+  strategyAgentSplit: {
+    src: "/images/strategy-collection-agent-split.webp",
+    alt: "An agent-first briefing with a large ARR on track headline, suggested prompts, and insight cards with charts.",
+    width: 3272,
+    height: 2256,
+  },
+  strategyAgentDark: {
+    src: "/images/strategy-collection-agent-dark.webp",
+    alt: "A dark briefing canvas with floating cards for new insights, items to pick back up, updated dashboards, and recent updates.",
+    width: 3272,
+    height: 2256,
+  },
+  strategyAgentBoard: {
+    src: "/images/strategy-collection-agent-board.webp",
+    alt: "A light briefing board with cards for Insights, Updates, and Dashboards around the ARR on track headline.",
+    width: 3272,
+    height: 2256,
+  },
+  strategyBriefingStable: {
+    src: "/images/strategy-collection-briefing-stable.webp",
+    alt: "A curated briefing titled The portfolio looks stable, but evidence is incomplete, with insight cards for shipped MCP tools and a Strategic Intelligence capacity crunch.",
+    width: 3272,
+    height: 1856,
+  },
+  strategyForYou: {
+    src: "/images/strategy-collection-for-you.webp",
+    alt: "The Strategic Intelligence For you page, with focus-area status cards and an activity feed of updates from those areas.",
+    width: 3272,
+    height: 1634,
+  },
+  strategyMoodboard: {
+    src: "/images/strategy-collection-moodboard.webp",
+    alt: "A moodboard of dashboards, product launches, sleep tracking, JARVIS-style overlays, and other interfaces that informed the early direction.",
+    width: 3272,
+    height: 1756,
+  },
+  strategyPhones: {
+    src: "/images/strategy-collection-phones.webp",
+    alt: "Four phone screens for an AI Experience portfolio: a score of 54, a weekly trend, a Rovo chat, and a generated briefing.",
+    width: 3272,
+    height: 1686,
+  },
+  strategySnapshot: {
+    src: "/images/strategy-collection-snapshot.webp",
+    alt: "A strategic snapshot for Kayla, with Rovo summarizing priority performance, stacked status charts, and a list of focus areas.",
+    width: 3272,
+    height: 1677,
   },
   postOfficeHero: {
     src: "/images/post-office-hero.webp",
@@ -77,6 +140,18 @@ const shots = {
     alt: "The same messaging system across channels: in-product flags, a Confluence page, and an email digest of what the team is reading.",
     width: 3272,
     height: 1788,
+  },
+  postOfficeAttention: {
+    src: "/images/post-office-attention.webp",
+    alt: "The level of attention framework on a Jira Product Discovery overlay: notable attention, overlay with blanket, major brand moment, and rare frequency.",
+    width: 3272,
+    height: 1872,
+  },
+  postOfficeMoments: {
+    src: "/images/post-office-moments.webp",
+    alt: "A grid of branded moment overlays across Confluence, Teams, Jira Product Discovery, and Jira Service Management.",
+    width: 3272,
+    height: 1886,
   },
   postOfficeAcrossApps: {
     src: "/images/post-office-across-apps.webp",
@@ -189,6 +264,8 @@ export type CaseStudy = {
   sections: CaseStudySection[];
   /** Full-width shot above the first section, when the story opens on a photo. */
   hero?: CaseStudyShot;
+  /** Optional clip under the hero, in the same rounded frame as the stills. */
+  heroClip?: CaseStudyShot;
   /** The design cycles the work in a different order than the home grid. */
   previous: CaseStudySlug;
   next: CaseStudySlug;
@@ -208,24 +285,50 @@ export const caseStudies: CaseStudy[] = [
     palette: "palette-strategy-collection",
     previous: "post-office",
     next: "campaign-manager",
+    hero: shots.strategyTablet,
+    heroClip: {
+      src: "/images/strategy-collection-clip.mp4",
+      alt: "A Strategy Collection film, opening on a chess pawn and rook.",
+      width: 1920,
+      height: 1080,
+      kind: "video",
+    },
     sections: [
       {
         label: "The initial direction",
         body:
           "Before Strategic Intelligence, leaders had no actionable, intelligent way to sense and steer their business. We started with a ‘For You’ page with three layers—Portfolio Health, Execution Feed, Active Tasks—each surfacing signals for Executives who need visibility, Buyers who own the operating cadence, and Contributors who input the signals. We embedded Rovo throughout, treating AI as intelligence woven into the insight layer.",
-        images: [shots.strategyTablet],
+        images: [
+          shots.strategyForYou,
+          shots.strategyMoodboard,
+          shots.strategyPhones,
+          shots.strategySnapshot,
+        ],
       },
       {
         label: "The insight",
         body:
           "But the early signals revealed the real problem: leaders don’t need more data, they need better questions. A dashboard—even an AI-informed one—still asks users to hunt. That gap led us to pivot.",
-        images: [shots.strategyPhone],
+        images: [
+          [
+            shots.strategyBriefingStand,
+            shots.strategyBriefingHeadline,
+            shots.strategyBriefingWeekly,
+          ],
+        ],
       },
       {
         label: "The new direction",
         body:
           "We rebuilt as an agent-first, chat-led interface where Rovo becomes the decision partner—surfacing the right signals to the right person at the right moment. Critically, we grounded intelligence in our teamwork graph data and built pathways for users to understand how signals were gathered, ensuring trust over black-box AI. For Executives: faster sensemaking. For Buyers: a trusted compass for running business rhythm. For Contributors: their inputs become visible impact.",
-        images: [shots.strategyTablet],
+        images: [
+          [
+            shots.strategyAgentSplit,
+            shots.strategyAgentDark,
+            shots.strategyAgentBoard,
+          ],
+          shots.strategyBriefingStable,
+        ],
       },
       {
         label: "The outcome",
@@ -258,6 +361,8 @@ export const caseStudies: CaseStudy[] = [
           shots.postOfficeSpotlight,
           shots.postOfficeFlags,
           shots.postOfficeChannels,
+          shots.postOfficeAttention,
+          shots.postOfficeMoments,
         ],
       },
       {
@@ -345,9 +450,16 @@ export function getCaseStudy(slug: string) {
 }
 
 /** Document order, including repeats, so the lightbox walks the page. */
+function flattenImages(images: CaseStudySection["images"]) {
+  return (images ?? []).flatMap((item) =>
+    Array.isArray(item) ? item : [item],
+  );
+}
+
 export function caseStudyShots(study: CaseStudy) {
   return [
     ...(study.hero ? [study.hero] : []),
-    ...study.sections.flatMap((section) => section.images ?? []),
+    ...(study.heroClip ? [study.heroClip] : []),
+    ...study.sections.flatMap((section) => flattenImages(section.images)),
   ];
 }

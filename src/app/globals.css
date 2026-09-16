@@ -434,7 +434,7 @@ html:has([data-case-study="campaign-manager"]) {
     -webkit-user-drag: none;
   }
 
-  .shot-dialog.is-open .has-many .shot-slide.is-settled .shot-hero {
+  .shot-dialog.is-open .has-many .shot-slide.is-settled img.shot-hero {
     cursor: grab;
     touch-action: pan-y;
   }
