@@ -30,13 +30,77 @@ const shots = {
     src: "/images/strategy-collection-phone.webp",
     alt: "Strategy Collection on a phone, showing the portfolio summary and a queue of suggested actions.",
   },
-  postOfficeLaptop: {
-    src: "/images/post-office-laptop.webp",
-    alt: "An Atlassian home screen on a laptop, with a Spotlight message introducing work across Atlassian.",
+  postOfficeHero: {
+    src: "/images/post-office-hero.webp",
+    alt: "A laptop on an orange chair showing Atlassian Home, with a Welcome Home spotlight, Getting started cards, and Frequently visited.",
+    width: 3272,
+    height: 2454,
   },
-  postOfficeTablet: {
-    src: "/images/post-office-tablet.webp",
-    alt: "The same Spotlight onboarding message on a tablet, stepping through getting started.",
+  postOfficeNoise: {
+    src: "/images/post-office-noise.webp",
+    alt: "A Confluence page crowded with overlapping purple onboarding boxes, flags, and spotlights competing for attention.",
+    width: 3272,
+    height: 1664,
+  },
+  postOfficeCourier: {
+    src: "/images/post-office-courier.webp",
+    alt: "Courier’s messaging principles, four intensity levels from Subtle to Notable, and Confluence pages for Message Maker Guidance and the pattern library.",
+    width: 3272,
+    height: 3342,
+  },
+  postOfficeSpotlight: {
+    src: "/images/post-office-spotlight.webp",
+    alt: "Spotlight in Confluence on a Strategy Planning page, with an inline comment prompt and a notifications panel of comments and requests.",
+    width: 3272,
+    height: 1788,
+  },
+  postOfficeOnboarding: {
+    src: "/images/post-office-onboarding.webp",
+    alt: "Confluence Home with the old purple Welcome box versus Atlassian Home with Spotlight’s dark Welcome Home tooltip.",
+    width: 3272,
+    height: 1396,
+  },
+  postOfficeHome: {
+    src: "/images/post-office-home.webp",
+    alt: "Atlassian Home with a Connect your work across Atlassian banner, Getting started cards for Jira, Confluence, Loom, and Rovo, and Frequently visited.",
+    width: 3272,
+    height: 1853,
+  },
+  postOfficeFlags: {
+    src: "/images/post-office-flags.webp",
+    alt: "A set of composable in-product messages: comments, reactions, published-page flags, replies, and a first-project tour.",
+    width: 3272,
+    height: 1760,
+  },
+  postOfficeChannels: {
+    src: "/images/post-office-channels.webp",
+    alt: "The same messaging system across channels: in-product flags, a Confluence page, and an email digest of what the team is reading.",
+    width: 3272,
+    height: 1788,
+  },
+  postOfficeAcrossApps: {
+    src: "/images/post-office-across-apps.webp",
+    alt: "Spotlight across Atlassian surfaces—Home, Teamwork, Focus, Bitbucket, Jira Service Management, and Discovery—around a Coherent across apps & collections title.",
+    width: 3272,
+    height: 1883,
+  },
+  postOfficeFigma: {
+    src: "/images/post-office-figma.webp",
+    alt: "The Spotlight Figma kit: ready-made examples in light and dark, component variants by caret position, and purple code parts.",
+    width: 3272,
+    height: 2454,
+  },
+  postOfficeUsage: {
+    src: "/images/post-office-usage.webp",
+    alt: "The Atlassian Design System Spotlight usage page, with guidance for a single-step spotlight on a Jira board.",
+    width: 3272,
+    height: 1696,
+  },
+  campaignHero: {
+    src: "/images/campaign-manager-hero.webp",
+    alt: "A laptop on a green sofa showing the Instacart campaign builder on the Offer step, with shortcut rewards and earning conditions.",
+    width: 3272,
+    height: 2454,
   },
   campaignOffers: {
     src: "/images/campaign-manager-offers.webp",
@@ -123,6 +187,8 @@ export type CaseStudy = {
   /** Rebinds the color slots to this project's palette, for the card leading here. */
   palette: string;
   sections: CaseStudySection[];
+  /** Full-width shot above the first section, when the story opens on a photo. */
+  hero?: CaseStudyShot;
   /** The design cycles the work in a different order than the home grid. */
   previous: CaseStudySlug;
   next: CaseStudySlug;
@@ -180,24 +246,35 @@ export const caseStudies: CaseStudy[] = [
     palette: "palette-post-office",
     previous: "campaign-manager",
     next: "strategy-collection",
+    hero: shots.postOfficeHero,
     sections: [
       {
         label: "The opportunity",
         body:
           "Atlassian sends millions of in-product messages across its system of work, but with no coherent strategy. Teams built messaging from scratch, resulting in fragmented designs, message fatigue, and inconsistent experiences. Post Office was created to fix this: a centralized platform for orchestrating messaging across all channels (in-product, email, chat, push). My role was to lead Courier, Post Office’s pattern library—the foundational components and guidance that would enable teams to send the right message at the right time.",
-        images: [shots.postOfficeLaptop],
+        images: [
+          shots.postOfficeNoise,
+          shots.postOfficeCourier,
+          shots.postOfficeSpotlight,
+          shots.postOfficeFlags,
+          shots.postOfficeChannels,
+        ],
       },
       {
         label: "The spotlight challenge",
         body:
           "For 10+ years, @atlaskit/onboarding—the ‘purple box’—was Atlassian’s onboarding component. It was failing: 75% dismissal rate, teams building custom workarounds, and technically impossible to modernize. Rather than patch it, we built new. I embedded directly with ADS for a sprint. We aligned on governance early—shared design commitment, clear documentation, owned pilots. That foundation shaped everything.",
-        images: [shots.postOfficeTablet],
+        images: [shots.postOfficeOnboarding, shots.postOfficeHome],
       },
       {
         label: "Our rigor",
         body:
           "We built @atlaskit/spotlight with composability at its core and encoded accessibility into the foundation. The design was intentional: it encouraged single-step messages by default, kept tours short, and pushed teams toward more disciplined usage patterns. Controlled rollouts let us measure impact in real products—and when Trello’s metrics dipped, they were able to customize the component without needing workarounds. That composability proved the design thesis: a well-architected component enables teams to adapt without abandoning consistency.",
-        images: [shots.postOfficeLaptop],
+        images: [
+          shots.postOfficeAcrossApps,
+          shots.postOfficeFigma,
+          shots.postOfficeUsage,
+        ],
       },
       {
         label: "The outcome",
@@ -219,6 +296,7 @@ export const caseStudies: CaseStudy[] = [
     palette: "palette-campaign-manager",
     previous: "strategy-collection",
     next: "post-office",
+    hero: shots.campaignHero,
     sections: [
       {
         label: "The problem",
@@ -268,5 +346,8 @@ export function getCaseStudy(slug: string) {
 
 /** Document order, including repeats, so the lightbox walks the page. */
 export function caseStudyShots(study: CaseStudy) {
-  return study.sections.flatMap((section) => section.images ?? []);
+  return [
+    ...(study.hero ? [study.hero] : []),
+    ...study.sections.flatMap((section) => section.images ?? []),
+  ];
 }

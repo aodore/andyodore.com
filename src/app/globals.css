@@ -332,20 +332,25 @@ html:has([data-case-study="campaign-manager"]) {
   /* Native <dialog> fills the viewport so a click on the dimmed field is a
      click on the dialog itself; the panel inside is the card. UA chrome is
      reset, then the canvas, radius, and stagger-like entrance take over. */
-  .password-dialog {
+  .password-dialog,
+  .shot-dialog {
     width: 100%;
     max-width: none;
     height: 100%;
     max-height: none;
     margin: 0;
-    padding: 1rem;
     border: 0;
+  }
+
+  .password-dialog {
+    padding: 1rem;
     background: transparent;
     color: inherit;
     color-scheme: inherit;
   }
 
-  .password-dialog:focus {
+  .password-dialog:focus,
+  .shot-dialog:focus {
     outline: none;
   }
 
@@ -365,6 +370,192 @@ html:has([data-case-study="campaign-manager"]) {
 
   .password-dialog[open]::backdrop {
     animation: password-dialog-backdrop-in 280ms ease;
+  }
+
+  /* Image lightbox: no card. The shot flies from its thumbnail while
+     the sampled field blankets in on the same beat. */
+  .shot-dialog {
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+    color: var(--shot-chrome, var(--ink));
+    color-scheme: inherit;
+  }
+
+  .shot-dialog[open] {
+    display: block;
+  }
+
+  .shot-dialog::backdrop {
+    background: transparent;
+  }
+
+  .shot-dialog.is-enter-image,
+  .shot-dialog.is-enter-play,
+  .shot-dialog.is-open {
+    transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1) 100ms;
+  }
+
+  .shot-dialog.is-exit-image {
+    transition: background-color 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-dialog.is-enter-play,
+  .shot-dialog.is-open {
+    background-color: var(--shot-field, var(--canvas));
+  }
+
+  .shot-chrome {
+    opacity: 0;
+  }
+
+  .shot-dialog.is-enter-image .shot-chrome,
+  .shot-dialog.is-enter-play .shot-chrome,
+  .shot-dialog.is-open .shot-chrome {
+    transition: opacity 180ms cubic-bezier(0.2, 0, 0, 1) 100ms;
+  }
+
+  .shot-dialog.is-exit-image .shot-chrome {
+    transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-dialog.is-enter-play .shot-chrome,
+  .shot-dialog.is-open .shot-chrome {
+    opacity: 1;
+  }
+
+  .shot-hero {
+    overflow: hidden;
+    border-radius: 1.5rem;
+    transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .shot-dialog.is-open .has-many .shot-slide.is-settled .shot-hero {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .shot-dialog-stage.is-dragging,
+  .shot-dialog-stage.is-dragging .shot-hero {
+    cursor: grabbing;
+  }
+
+  .shot-dialog.is-enter-image .shot-hero {
+    border-radius: var(--shot-radius, 1.5rem);
+    transform: var(--shot-flip, translate3d(0, 30vh, 0));
+    transition: none;
+  }
+
+  .shot-dialog.is-enter-play .shot-hero,
+  .shot-dialog.is-open .shot-hero {
+    border-radius: 1.5rem;
+    transform: none;
+    transition:
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-radius 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-dialog.is-exit-image .shot-hero {
+    border-radius: var(--shot-radius, 1.5rem);
+    transform: var(--shot-flip, translate3d(0, 30vh, 0));
+    transition:
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-radius 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-dialog.is-enter-prep,
+  .shot-dialog.is-enter-image,
+  .shot-dialog.is-enter-play,
+  .shot-dialog.is-exit-image {
+    overflow: visible;
+  }
+
+  .shot-dialog.is-enter-prep .shot-lift,
+  .shot-dialog.is-enter-image .shot-lift,
+  .shot-dialog.is-enter-play .shot-lift,
+  .shot-dialog.is-exit-image .shot-lift,
+  .shot-dialog.is-enter-prep .shot-slide,
+  .shot-dialog.is-enter-image .shot-slide,
+  .shot-dialog.is-enter-play .shot-slide,
+  .shot-dialog.is-exit-image .shot-slide,
+  .shot-dialog.is-enter-prep .shot-slide-scroll,
+  .shot-dialog.is-enter-image .shot-slide-scroll,
+  .shot-dialog.is-enter-play .shot-slide-scroll,
+  .shot-dialog.is-exit-image .shot-slide-scroll {
+    overflow: visible;
+  }
+
+  .shot-dialog-control {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border: 0;
+    border-radius: 9999px;
+    background: #fff;
+    color: var(--espresso);
+    cursor: pointer;
+    box-shadow: none;
+  }
+
+  .shot-slide {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .shot-slide:not(.is-settled) {
+    pointer-events: none;
+  }
+
+  .shot-slide-scroll {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .shot-slide.is-settled .shot-slide-scroll {
+    overflow-y: auto;
+  }
+
+  .shot-slide-track {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    min-height: 100%;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-slide-track.is-parked {
+    transition: none;
+  }
+
+  .shot-slide-track.is-enter-right {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  .shot-slide-track.is-enter-left {
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  .shot-slide-track.is-exit-left {
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  .shot-slide-track.is-exit-right {
+    transform: translate3d(100%, 0, 0);
   }
 
   .password-field-error {
@@ -416,14 +607,32 @@ html:has([data-case-study="campaign-manager"]) {
 
     .password-dialog[open] .password-dialog-panel,
     .password-dialog[open]::backdrop,
+    .shot-dialog[open] .shot-dialog-stage,
+    .shot-dialog[open]::backdrop,
     .password-field-error {
       animation: none;
+    }
+
+    .shot-hero,
+    .shot-chrome {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .shot-slide-track {
+      transition: none !important;
+      transform: none !important;
     }
   }
 }
 
 /* Unlayered so it beats the control's opacity utility. The button is fixed
    and would otherwise sit on top of the dimmed field. */
+html:has(.shot-dialog[open]) {
+  overflow: hidden;
+}
+
 body:has(dialog[open]) .back-to-top {
   opacity: 0;
   pointer-events: none;

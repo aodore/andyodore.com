@@ -9,7 +9,7 @@ import {
   Monogram,
 } from "@/components/brand";
 import type { CaseStudy } from "@/lib/case-studies";
-import { helloCues, quietCues } from "@/lib/sound";
+import { dismissCues, helloCues, quietCues } from "@/lib/sound";
 import { unlockWork } from "@/lib/unlock-work";
 
 export function PasswordModal({
@@ -130,7 +130,7 @@ function PasswordForm({
           disabled={pending}
           aria-label="Close"
           className="text-ink hover:bg-ink/8 grid size-8 cursor-pointer place-items-center rounded-full transition-colors disabled:opacity-70"
-          {...quietCues}
+          {...dismissCues}
         >
           <CloseIcon className="size-4" />
         </button>

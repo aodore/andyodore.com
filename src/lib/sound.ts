@@ -8,10 +8,10 @@ import type { SoundName } from "cuelume";
  * `toggle` is cuelume's click hook, not a statement about the element — it is
  * the only attribute that follows native activation, so it also covers Enter.
  */
-function cues(hover: SoundName) {
+function cues(hover: SoundName, click: SoundName = "sparkle") {
   return {
     "data-cuelume-hover": hover,
-    "data-cuelume-toggle": "sparkle",
+    "data-cuelume-toggle": click,
   } satisfies Record<string, SoundName>;
 }
 
@@ -21,6 +21,9 @@ export const linkCues = cues("bloom");
 /** The small chrome — footer icons, the theme toggle — where a full bloom is
     too much for something you sweep past on the way somewhere else. */
 export const quietCues = cues("whisper");
+
+/** Close and dismiss: the refusal that says this is going away. */
+export const dismissCues = cues("whisper", "error");
 
 /** The one invitation in the header, so it gets the cue that resolves. */
 export const helloCues = cues("ready");

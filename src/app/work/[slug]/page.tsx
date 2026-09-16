@@ -83,23 +83,33 @@ export default async function CaseStudyPage({
               <div className="mt-10 flex flex-col gap-10 xl:mt-16 xl:gap-16">
                 {(() => {
                   let shotIndex = 0;
-                  return study.sections.map((section) => (
-                    <Fragment key={section.label}>
-                      <AboutRow label={section.label}>
-                        <p>{section.body}</p>
-                      </AboutRow>
-                      {section.images?.map((shot) => {
-                        const index = shotIndex++;
-                        return (
-                          <ShotTrigger
-                            key={`${section.label}-${index}`}
-                            shot={shot}
-                            index={index}
-                          />
-                        );
-                      })}
-                    </Fragment>
-                  ));
+                  return (
+                    <>
+                      {study.hero && (
+                        <ShotTrigger
+                          shot={study.hero}
+                          index={shotIndex++}
+                        />
+                      )}
+                      {study.sections.map((section) => (
+                        <Fragment key={section.label}>
+                          <AboutRow label={section.label}>
+                            <p>{section.body}</p>
+                          </AboutRow>
+                          {section.images?.map((shot) => {
+                            const index = shotIndex++;
+                            return (
+                              <ShotTrigger
+                                key={`${section.label}-${index}`}
+                                shot={shot}
+                                index={index}
+                              />
+                            );
+                          })}
+                        </Fragment>
+                      ))}
+                    </>
+                  );
                 })()}
               </div>
             </ShotLightbox>
