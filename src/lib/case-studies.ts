@@ -38,6 +38,24 @@ const shots = {
     src: "/images/post-office-tablet.webp",
     alt: "The same Spotlight onboarding message on a tablet, stepping through getting started.",
   },
+  campaignOffers: {
+    src: "/images/campaign-manager-offers.webp",
+    alt: "The old Unata offers admin: a table of draft offers above a form for a free-delivery offer, with dates, conditions, and a customer list.",
+    width: 3272,
+    height: 1670,
+  },
+  campaignModel: {
+    src: "/images/campaign-manager-model.webp",
+    alt: "A system diagram of campaign inputs on the retailer side and campaign outputs on the consumer side, connected by data, action, and experience.",
+    width: 3272,
+    height: 1897,
+  },
+  campaignFramework: {
+    src: "/images/campaign-manager-framework.webp",
+    alt: "A campaign framework stacked as objective, setup, targeting, offer, and promote, with the questions each step has to answer.",
+    width: 3272,
+    height: 1430,
+  },
   campaignTablet: {
     src: "/images/campaign-manager-create.webp",
     alt: "The Instacart campaign builder on the create step, with cards for acquire, grow basket, and win-back objectives, and a phone preview of the storefront.",
@@ -206,7 +224,12 @@ export const caseStudies: CaseStudy[] = [
         label: "The problem",
         body:
           "Before, Instacart’s marketing tooling was limited and not self-serve. Retailers who wanted to run campaigns had to rely on managed services or manual processes—slow, expensive, and inflexible.",
-        images: [shots.campaignTablet],
+        images: [
+          shots.campaignOffers,
+          shots.campaignModel,
+          shots.campaignFramework,
+          shots.campaignTablet,
+        ],
       },
       {
         label: "Why it mattered",
