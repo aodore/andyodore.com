@@ -124,10 +124,11 @@ const shots = {
     height: 1396,
   },
   postOfficeHome: {
-    src: "/images/post-office-home.webp",
+    src: "/images/post-office-home.mp4",
     alt: "Atlassian Home with a Connect your work across Atlassian banner, Getting started cards for Jira, Confluence, Loom, and Rovo, and Frequently visited.",
-    width: 3272,
-    height: 1853,
+    width: 2880,
+    height: 1800,
+    kind: "video",
   },
   postOfficeFlags: {
     src: "/images/post-office-flags.webp",

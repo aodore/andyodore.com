@@ -343,7 +343,7 @@ export function ShotTrigger({
           loop
           playsInline
           preload="metadata"
-          className="h-auto w-full cursor-zoom-in"
+          className="shot-clip h-auto w-full cursor-zoom-in"
           aria-label={`View film ${index + 1}: ${shot.alt}`}
           onClick={(event) => openFrom(event.currentTarget)}
         />
@@ -406,7 +406,7 @@ function ShotImage({
         loop
         playsInline
         controls
-        className={className}
+        className={["shot-clip", className].filter(Boolean).join(" ")}
         aria-label={shot.alt}
         onLoadedData={(event) => onReady?.(event.currentTarget)}
       />

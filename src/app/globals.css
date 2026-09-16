@@ -637,3 +637,10 @@ body:has(dialog[open]) .back-to-top {
   opacity: 0;
   pointer-events: none;
 }
+
+/* Unlayered so it beats w-full. Crops the 1px capture fringe on top/left. */
+video.shot-clip {
+  width: calc(100% + 1px);
+  max-width: none;
+  margin: -1px 0 0 -1px;
+}
