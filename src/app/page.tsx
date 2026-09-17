@@ -15,6 +15,7 @@ import {
   getCaseStudy,
 } from "@/lib/case-studies";
 import { isGatedWorkSlug } from "@/lib/gated-work";
+import { getTallyCounts } from "@/lib/tally-store";
 import { hasWorkAccess } from "@/lib/work-session";
 
 const perspective = [
@@ -35,6 +36,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   if (unlocked && unlockSlug) {
     redirect(caseStudyHref(unlockSlug));
   }
+
+  const tallyCounts = await getTallyCounts();
 
   return (
     <WorkGate unlocked={unlocked} initialSlug={unlockSlug}>
@@ -120,7 +123,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
                 <hr className="t-stagger-line border-rule my-10 xl:my-16" />
 
-                <AccentTally />
+                <AccentTally initialCounts={tallyCounts} />
               </div>
             </main>
 

@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# local poll totals when Redis is not configured
+.data/
+
 # vercel
 .vercel
 

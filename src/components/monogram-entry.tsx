@@ -502,7 +502,7 @@ export function MonogramEntry() {
         // Storage is unavailable in private mode. The palette still applies;
         // the visitor just gets to choose again next time.
       }
-      recordAccentChoice(accent.name);
+      void recordAccentChoice(accent.name);
 
       const root = document.documentElement;
       timers.current.push(

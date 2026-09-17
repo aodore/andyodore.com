@@ -1,109 +1,64 @@
-import {
-  ACCENT_STORAGE_KEY,
-  accents,
-  type AccentName,
-} from "@/lib/accent";
+import { ACCENT_STORAGE_KEY, isAccentName, type AccentName } from "@/lib/accent";
+import { TALLY_EVENT, emptyTallyCounts, type Tally } from "@/lib/tally";
 
-export const ACCENT_LOG_KEY = "accent-log";
-export const ACCENT_LOG_EVENT = "accent:log";
+export { TALLY_EVENT } from "@/lib/tally";
 
-const names = new Set<string>(accents.map((accent) => accent.name));
-
-export type AccentLogEntry = {
-  name: AccentName;
-  at: number;
-};
-
-export type AccentLog = {
-  counts: Record<AccentName, number>;
-  entries: AccentLogEntry[];
-};
-
-export function emptyAccentLog(): AccentLog {
-  return {
-    counts: { amber: 0, ember: 0, meadow: 0, rose: 0, tide: 0 },
-    entries: [],
-  };
-}
-
-function isAccentName(value: string): value is AccentName {
-  return names.has(value);
-}
-
-function parseLog(raw: string): AccentLog | null {
+async function parseTally(response: Response): Promise<Tally | null> {
+  if (!response.ok) return null;
   try {
-    const data = JSON.parse(raw) as Partial<AccentLog>;
-    const next = emptyAccentLog();
-    if (data.counts && typeof data.counts === "object") {
-      for (const accent of accents) {
-        const count = data.counts[accent.name];
-        if (typeof count === "number" && count >= 0) {
-          next.counts[accent.name] = Math.floor(count);
-        }
-      }
-    }
-    if (Array.isArray(data.entries)) {
-      next.entries = data.entries.flatMap((entry) => {
-        if (
-          !entry ||
-          typeof entry !== "object" ||
-          !isAccentName(entry.name) ||
-          typeof entry.at !== "number"
-        ) {
-          return [];
-        }
-        return [{ name: entry.name, at: entry.at }];
-      });
-    }
-    return next;
+    return (await response.json()) as Tally;
   } catch {
     return null;
   }
 }
 
-function writeLog(log: AccentLog) {
-  localStorage.setItem(ACCENT_LOG_KEY, JSON.stringify(log));
-  window.dispatchEvent(new Event(ACCENT_LOG_EVENT));
-}
-
-export function readAccentLog(): AccentLog {
+export async function fetchTally(): Promise<Tally | null> {
   try {
-    const raw = localStorage.getItem(ACCENT_LOG_KEY);
-    if (raw) return parseLog(raw) ?? emptyAccentLog();
+    return await parseTally(await fetch("/api/tally", { cache: "no-store" }));
   } catch {
-    // Private mode: the tally just stays empty.
+    return null;
   }
-  return emptyAccentLog();
 }
 
-/** Fills a missing log from the accent already on this device, so visitors
-    who chose before the tally existed are not starting from zero. */
-export function hydrateAccentLog(): AccentLog {
-  const existing = readAccentLog();
-  if (existing.entries.length > 0) return existing;
+function publish(tally: Tally) {
+  window.dispatchEvent(new CustomEvent(TALLY_EVENT, { detail: tally }));
+}
+
+/** Casts this visitor's vote. Picking again moves the vote rather than
+    stacking another one, so one browser is one voice. */
+export async function recordAccentChoice(name: AccentName) {
   try {
-    const current = localStorage.getItem(ACCENT_STORAGE_KEY);
-    if (current && isAccentName(current)) {
-      const seeded = emptyAccentLog();
-      seeded.counts[current] = 1;
-      seeded.entries.push({ name: current, at: Date.now() });
-      writeLog(seeded);
-      return seeded;
+    const tally = await parseTally(
+      await fetch("/api/tally", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      }),
+    );
+    if (tally) publish(tally);
+    return tally;
+  } catch {
+    return null;
+  }
+}
+
+/** Returning visitors who chose before the poll existed still get counted
+    once, from the accent already on this device. */
+export async function hydrateAccentLog() {
+  const tally = await fetchTally();
+  if (!tally) return { counts: emptyTallyCounts(), vote: null };
+  if (tally.vote) {
+    publish(tally);
+    return tally;
+  }
+  try {
+    const stored = localStorage.getItem(ACCENT_STORAGE_KEY);
+    if (stored && isAccentName(stored)) {
+      return (await recordAccentChoice(stored)) ?? tally;
     }
   } catch {
-    // Same as a missing store.
+    // Private mode: they can still vote when they drop a monogram.
   }
-  return existing;
-}
-
-export function recordAccentChoice(name: AccentName): AccentLog {
-  const log = readAccentLog();
-  log.counts[name] += 1;
-  log.entries.push({ name, at: Date.now() });
-  try {
-    writeLog(log);
-  } catch {
-    // Same as a missing store: the page still wears the color.
-  }
-  return log;
+  publish(tally);
+  return tally;
 }

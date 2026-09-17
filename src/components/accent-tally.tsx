@@ -4,21 +4,16 @@ import { useEffect, useState } from "react";
 import { AboutRow } from "@/components/about-row";
 import { Monogram } from "@/components/brand";
 import { accents } from "@/lib/accent";
-import {
-  ACCENT_LOG_EVENT,
-  emptyAccentLog,
-  hydrateAccentLog,
-  readAccentLog,
-  type AccentLog,
-} from "@/lib/accent-log";
+import { hydrateAccentLog, TALLY_EVENT } from "@/lib/accent-log";
+import { type Tally, type TallyCounts } from "@/lib/tally";
 
-function leadingCopy(log: AccentLog) {
+function leadingCopy(counts: TallyCounts) {
   let max = 0;
   for (const accent of accents) {
-    max = Math.max(max, log.counts[accent.name]);
+    max = Math.max(max, counts[accent.name]);
   }
   if (max === 0) return null;
-  const tied = accents.filter((accent) => log.counts[accent.name] === max);
+  const tied = accents.filter((accent) => counts[accent.name] === max);
   if (tied.length === 1) return `${tied[0].label} leads the way.`;
   if (tied.length === 2) {
     return `${tied[0].label} and ${tied[1].label} are tied.`;
@@ -34,22 +29,30 @@ function changeExperience() {
   document.querySelector<HTMLButtonElement>(".home-monogram")?.click();
 }
 
-/** Running count of which palettes have been posted into the slot, kept on
-    this device. Lives with the other home-page notes so the tally can grow
-    each time someone picks again. */
-export function AccentTally() {
-  const [log, setLog] = useState<AccentLog>(emptyAccentLog);
+/** Sitewide poll of which palettes visitors have posted into the slot.
+    One browser is one vote; dropping a different color moves it. */
+export function AccentTally({
+  initialCounts,
+}: {
+  initialCounts: TallyCounts;
+}) {
+  const [counts, setCounts] = useState<TallyCounts>(initialCounts);
 
   useEffect(() => {
-    setLog(hydrateAccentLog());
-    const sync = () => setLog(readAccentLog());
-    window.addEventListener(ACCENT_LOG_EVENT, sync);
-    return () => window.removeEventListener(ACCENT_LOG_EVENT, sync);
+    const apply = (tally: Tally) => setCounts(tally.counts);
+    const sync = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail?.counts) {
+        apply(event.detail as Tally);
+      }
+    };
+    window.addEventListener(TALLY_EVENT, sync);
+    void hydrateAccentLog().then((tally) => apply(tally));
+    return () => window.removeEventListener(TALLY_EVENT, sync);
   }, []);
 
-  const lead = leadingCopy(log);
+  const lead = leadingCopy(counts);
   const ranked = [...accents].sort(
-    (a, b) => log.counts[b.name] - log.counts[a.name],
+    (a, b) => counts[b.name] - counts[a.name],
   );
 
   return (
@@ -76,7 +79,7 @@ export function AccentTally() {
           >
             <Monogram className="size-16 sm:size-[72px] xl:size-[90px]" />
             <span className="text-[var(--espresso)] tabular-nums">
-              {log.counts[accent.name]}
+              {counts[accent.name]}
             </span>
             <span className="sr-only">{accent.label}</span>
           </li>

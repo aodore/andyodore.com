@@ -32,6 +32,12 @@ export const accents = [
   { name: "tide", label: "Tide" },
 ] as const satisfies readonly Accent[];
 
+const names = new Set<string>(accents.map((accent) => accent.name));
+
+export function isAccentName(value: string): value is AccentName {
+  return names.has(value);
+}
+
 const pattern = accents.map((accent) => accent.name).join("|");
 
 /**
