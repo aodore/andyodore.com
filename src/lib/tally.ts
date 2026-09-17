@@ -1,13 +1,11 @@
 import { accents, type AccentName } from "@/lib/accent";
 
 export const TALLY_EVENT = "accent:tally";
-export const TALLY_VOTE_COOKIE = "accent-vote";
 
 export type TallyCounts = Record<AccentName, number>;
 
 export type Tally = {
   counts: TallyCounts;
-  vote: AccentName | null;
 };
 
 export function emptyTallyCounts(): TallyCounts {

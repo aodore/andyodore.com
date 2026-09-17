@@ -1,4 +1,4 @@
-import { ACCENT_STORAGE_KEY, isAccentName, type AccentName } from "@/lib/accent";
+import { type AccentName } from "@/lib/accent";
 import { TALLY_EVENT, emptyTallyCounts, type Tally } from "@/lib/tally";
 
 export { TALLY_EVENT } from "@/lib/tally";
@@ -24,8 +24,8 @@ function publish(tally: Tally) {
   window.dispatchEvent(new CustomEvent(TALLY_EVENT, { detail: tally }));
 }
 
-/** Casts this visitor's vote. Picking again moves the vote rather than
-    stacking another one, so one browser is one voice. */
+/** Adds one to the dropped color. Picking again adds another — the tally
+    is a running score, not a sealed ballot. */
 export async function recordAccentChoice(name: AccentName) {
   try {
     const tally = await parseTally(
@@ -42,23 +42,10 @@ export async function recordAccentChoice(name: AccentName) {
   }
 }
 
-/** Returning visitors who chose before the poll existed still get counted
-    once, from the accent already on this device. */
 export async function hydrateAccentLog() {
-  const tally = await fetchTally();
-  if (!tally) return { counts: emptyTallyCounts(), vote: null };
-  if (tally.vote) {
-    publish(tally);
-    return tally;
-  }
-  try {
-    const stored = localStorage.getItem(ACCENT_STORAGE_KEY);
-    if (stored && isAccentName(stored)) {
-      return (await recordAccentChoice(stored)) ?? tally;
-    }
-  } catch {
-    // Private mode: they can still vote when they drop a monogram.
-  }
+  const tally = (await fetchTally()) ?? {
+    counts: emptyTallyCounts(),
+  };
   publish(tally);
   return tally;
 }

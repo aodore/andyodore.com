@@ -29,8 +29,8 @@ function changeExperience() {
   document.querySelector<HTMLButtonElement>(".home-monogram")?.click();
 }
 
-/** Sitewide poll of which palettes visitors have posted into the slot.
-    One browser is one vote; dropping a different color moves it. */
+/** Sitewide running count of colors posted into the slot. Every drop adds
+    one, including picking again. */
 export function AccentTally({
   initialCounts,
 }: {

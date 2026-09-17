@@ -12,22 +12,6 @@ const redis =
 const TALLY_KEY = "accent-tally";
 const FILE_PATH = path.join(process.cwd(), ".data", "tally.json");
 
-const VOTE_SCRIPT = `
-local key = KEYS[1]
-local prev = ARGV[1]
-local nxt = ARGV[2]
-if prev ~= nxt then
-  if prev ~= '' then
-    local current = tonumber(redis.call('HGET', key, prev) or '0')
-    if current > 0 then
-      redis.call('HINCRBY', key, prev, -1)
-    end
-  end
-  redis.call('HINCRBY', key, nxt, 1)
-end
-return redis.call('HGETALL', key)
-`;
-
 function countsFromHash(entries: unknown): TallyCounts {
   const next = emptyTallyCounts();
   if (entries && typeof entries === "object" && !Array.isArray(entries)) {
@@ -103,27 +87,18 @@ export async function getTallyCounts(): Promise<TallyCounts> {
   return readFileCounts();
 }
 
-export async function recordTallyVote(
-  next: AccentName,
-  previous: AccentName | null,
-): Promise<TallyCounts> {
+export async function recordTallyVote(name: AccentName): Promise<TallyCounts> {
   if (redis) {
-    const result = await redis.eval(VOTE_SCRIPT, [TALLY_KEY], [
-      previous ?? "",
-      next,
-    ]);
-    return countsFromHash(result);
+    await redis.hincrby(TALLY_KEY, name, 1);
+    return countsFromHash(await redis.hgetall(TALLY_KEY));
   }
   if (process.env.VERCEL) {
     throw new Error("Accent tally is not configured");
   }
   return withFileLock(async () => {
     const counts = await readFileCounts();
-    if (previous !== next) {
-      if (previous) counts[previous] = Math.max(0, counts[previous] - 1);
-      counts[next] += 1;
-      await writeFileCounts(counts);
-    }
+    counts[name] += 1;
+    await writeFileCounts(counts);
     return counts;
   });
 }
