@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { AboutRow } from "@/components/about-row";
+import { AccentTally } from "@/components/accent-tally";
 import { HomeMonogram } from "@/components/home-monogram";
 import { MonogramEntry } from "@/components/monogram-entry";
 import { ProjectCard } from "@/components/project-card";
@@ -116,6 +117,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                     dad joke whether you asked for one or not.
                   </p>
                 </AboutRow>
+
+                <hr className="t-stagger-line border-rule my-10 xl:my-16" />
+
+                <AccentTally />
               </div>
             </main>
 

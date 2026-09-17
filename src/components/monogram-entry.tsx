@@ -8,6 +8,7 @@ import {
   ENTRY_REOPEN_EVENT,
   accents,
 } from "@/lib/accent";
+import { recordAccentChoice } from "@/lib/accent-log";
 
 /** Five seats, the first at twelve o'clock and the rest clockwise. */
 const SEAT_DEG = 360 / accents.length;
@@ -42,7 +43,8 @@ const SPRING = 118;
 const DAMPING = 12;
 
 /** Posting is the one move that should feel decisive, so it gets its own
-    stiffer, tighter spring. */
+    stiffer, tighter spring — that is only the sit in the mouth. The slide
+    down through the slot is a slow ease, not a spring. */
 const POST_SPRING = 260;
 const POST_DAMPING = 22;
 
@@ -54,8 +56,11 @@ const TAP_PX = 6;
 /** Slack around the mouth of the slot. Dropping is meant to be forgiving. */
 const CATCH_PX = 52;
 
-/** Long enough for the monogram to be all the way in before the floor goes. */
-const POST_MS = 420;
+/** Sit in the mouth after the catch, then slide down through the clip. */
+const POST_HOLD_MS = 420;
+const POST_SINK_MS = 820;
+/** Long enough for the monogram to vanish into the box before the floor goes. */
+const POST_MS = POST_HOLD_MS + POST_SINK_MS;
 /** The cream stage falling out the bottom of the viewport. */
 const DROP_MS = 720;
 /** The chosen canvas fading in over the empty frame. */
@@ -115,6 +120,7 @@ type Live = {
   hot: number;
   grab: Grab | null;
   posted: number;
+  postedAt: number;
   armed: boolean;
   reduced: boolean;
 };
@@ -135,6 +141,7 @@ function freshLive(): Live {
     hot: -1,
     grab: null,
     posted: -1,
+    postedAt: 0,
     armed: false,
     reduced: false,
   };
@@ -362,12 +369,24 @@ export function MonogramEntry() {
         }
 
         if (state.posted === i) {
-          // Centered on the mouth and far enough into it that the clip in
-          // CSS cuts the circle exactly at the slot's line.
+          // Sit on the mouth first, then ease down through the clip so the
+          // disc vanishes into the box instead of snapping through it.
           toX = mouth.left + mouth.width / 2 - cx;
-          toY = mouth.top + mouth.height / 2 - size * 0.2 - cy;
-          spring = POST_SPRING;
-          damping = POST_DAMPING;
+          const slotY = mouth.top + mouth.height / 2 - cy;
+          const restY = slotY - size * 0.42;
+          const goneY = slotY + size * 0.72;
+          const elapsed = now - state.postedAt;
+          if (state.reduced || elapsed >= POST_HOLD_MS + POST_SINK_MS) {
+            toY = goneY;
+          } else if (elapsed < POST_HOLD_MS) {
+            toY = restY;
+            spring = POST_SPRING;
+            damping = POST_DAMPING;
+          } else {
+            const u = Math.min((elapsed - POST_HOLD_MS) / POST_SINK_MS, 1);
+            const eased = 1 - (1 - u) ** 3;
+            toY = restY + (goneY - restY) * eased;
+          }
         }
 
         if (seat.waiting) {
@@ -399,6 +418,16 @@ export function MonogramEntry() {
           // after a miss, and the landing in the slot all just arrive.
           seat.x = toX;
           seat.y = toY;
+        } else if (
+          state.posted === i &&
+          now - state.postedAt >= POST_HOLD_MS
+        ) {
+          // The sink is a timed ease, not a spring, so it can be slow
+          // without feeling like it ran out of energy.
+          seat.vx = 0;
+          seat.vy = 0;
+          seat.x += (toX - seat.x) * Math.min(1, 14 * dt);
+          seat.y = toY;
         } else {
           // Semi-implicit Euler: stable at any frame rate we will ever see.
           seat.vx += (toX - seat.x) * spring * dt;
@@ -411,10 +440,14 @@ export function MonogramEntry() {
 
         el.style.translate = `${seat.x.toFixed(2)}px ${seat.y.toFixed(2)}px`;
 
-        // Clip anything below the slot's line while this disc is over the
-        // mouth, so it reads as going into the box rather than sitting on it.
-        const dipping = state.grab?.index === i || state.posted === i;
-        if (!dipping) {
+        // Clip only the disc that is actually in the mouth, and only below
+        // the slot's line. A grabbed monogram elsewhere on the page stays
+        // whole — the sink is not a horizon.
+        const inMouth =
+          state.posted === i ||
+          (state.grab?.index === i && overMouth(cx + seat.x, cy + seat.y));
+        if (!inMouth) {
+          el.classList.remove("is-sinking");
           el.style.removeProperty("--entry-sink");
         } else {
           const scale = state.grab?.index === i ? HELD_SCALE : 1;
@@ -422,8 +455,16 @@ export function MonogramEntry() {
           const line = mouth.top + mouth.height / 2;
           const localLine = (line - centerY) / scale;
           const pct = ((size / 2 - localLine) / size) * 100;
-          if (pct <= 0.4) el.style.removeProperty("--entry-sink");
-          else el.style.setProperty("--entry-sink", `${Math.min(100, pct).toFixed(1)}%`);
+          if (pct <= 0.4) {
+            el.classList.remove("is-sinking");
+            el.style.removeProperty("--entry-sink");
+          } else {
+            el.classList.add("is-sinking");
+            el.style.setProperty(
+              "--entry-sink",
+              `${Math.min(100, pct).toFixed(1)}%`,
+            );
+          }
         }
       });
 
@@ -445,6 +486,7 @@ export function MonogramEntry() {
 
       const accent = accents[index];
       state.posted = index;
+      state.postedAt = performance.now();
       state.grab = null;
       state.hot = -1;
       state.armed = false;
@@ -460,6 +502,7 @@ export function MonogramEntry() {
         // Storage is unavailable in private mode. The palette still applies;
         // the visitor just gets to choose again next time.
       }
+      recordAccentChoice(accent.name);
 
       const root = document.documentElement;
       timers.current.push(

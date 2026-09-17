@@ -196,14 +196,20 @@ html.theme-dark {
 }
 
 /* On the entry a circle is a swatch — it is the color being chosen, not a
-   logo being themed — so amber holds its daylight ring there instead of the
-   taupe the header monogram wears on a night page. Without this it is the one
-   grey disc among four vivid ones and reads as unavailable. The other four
-   hold their hue in both already.
+   logo being themed — so the seats keep their daylight ring and mark even
+   on a night page. Amber is the one that would otherwise go taupe; the
+   other four would keep their rings but drop the letter to near-black.
+   `color-scheme: light` is what makes `light-dark()` on those tokens
+   resolve as day. The explicit amber pair still has to beat the unlayered
+   `.accent-amber` rule above, which is why it lives here too.
 
    Unlayered like the rule above it has to beat, because an unlayered
    declaration outranks anything in @layer components no matter how specific
    that is. This does not belong with the rest of the entry's styles. */
+.entry-seat {
+  color-scheme: light;
+}
+
 .entry-seat.accent-amber,
 .entry-flood.accent-amber {
   --monogram-ring: var(--amber-soft);
@@ -302,8 +308,11 @@ html:has([data-case-study="campaign-manager"]) {
     -webkit-font-smoothing: antialiased;
     /* Keep the classic-scrollbar strip reserved so locking overflow on the
        entry (and on dialogs) cannot widen the page, then shove it back when
-       the bar returns. Overlay scrollbars leave this as a no-op. */
+       the bar returns. Overlay scrollbars leave this as a no-op. The
+       background has to live on `html` too: the gutter sits outside `body`,
+       and an unpainted root is how the previous canvas leaked into it. */
     scrollbar-gutter: stable;
+    background-color: var(--canvas);
   }
 
   html,
@@ -717,7 +726,7 @@ html:has([data-case-study="campaign-manager"]) {
     position: fixed;
     inset: 0;
     z-index: 60; /* over the floating back-to-top */
-    overflow: hidden; /* the stage leaving through the bottom, and nothing else */
+    overflow: visible;
 
     /* A monogram is 4.63% of the frame's width, and the pentagon they sit on
        has a radius of 1.94 monograms. Sitting lower than the original frame
@@ -817,6 +826,7 @@ html:has([data-case-study="campaign-manager"]) {
     [data-phase="wiping"],
     [data-phase="clearing"]
   ) {
+    overflow: hidden; /* the stage leaving through the bottom */
     pointer-events: none;
   }
 
@@ -929,14 +939,16 @@ html:has([data-case-study="campaign-manager"]) {
   }
 
   /* The clip lives inside the button so the focus ring, which sits outside
-     the border box, survives it. Default sink is a negative inset so the
-     anti-aliased rim of a circle drawn to the viewBox edge is not sheared
-     off; the loop raises it when the disc actually crosses the slot. */
+     the border box, survives it. It is off until the disc is actually in
+     the mouth — an always-on inset was shearing every circle on the page. */
   .entry-mark {
     display: block;
     overflow: visible;
-    clip-path: inset(-2px -2px var(--entry-sink, -2px) -2px);
     -webkit-user-drag: none;
+  }
+
+  .entry-seat.is-sinking .entry-mark {
+    clip-path: inset(-2px -2px var(--entry-sink, 0%) -2px);
   }
 
   .entry-mark > svg {
@@ -1105,6 +1117,13 @@ body:has(dialog[open]) .back-to-top {
 html.entry-pending {
   overflow: hidden;
   scrollbar-gutter: stable;
+}
+
+/* The gutter is html's, not the overlay's. While the intro is up, paint it
+   cream even if an accent class is still on the document from the page
+   behind. Once the home is uncovered, `--canvas` takes over again. */
+html.entry-pending:not(.entry-revealed) {
+  background-color: var(--entry-canvas);
 }
 
 html.entry-leaving {
