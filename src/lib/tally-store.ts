@@ -1,7 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { Redis } from "@upstash/redis";
 import { accents, type AccentName } from "@/lib/accent";
 import { emptyTallyCounts, type TallyCounts } from "@/lib/tally";
+
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
+    ? Redis.fromEnv()
+    : null;
 
 const TALLY_KEY = "accent-tally";
 const FILE_PATH = path.join(process.cwd(), ".data", "tally.json");
@@ -22,19 +28,17 @@ end
 return redis.call('HGETALL', key)
 `;
 
-type RedisConfig = { url: string; token: string };
-
-function redisConfig(): RedisConfig | null {
-  const url =
-    process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token =
-    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return { url, token };
-}
-
 function countsFromHash(entries: unknown): TallyCounts {
   const next = emptyTallyCounts();
+  if (entries && typeof entries === "object" && !Array.isArray(entries)) {
+    for (const accent of accents) {
+      const count = Number((entries as Record<string, unknown>)[accent.name]);
+      if (Number.isFinite(count) && count > 0) {
+        next[accent.name] = Math.floor(count);
+      }
+    }
+    return next;
+  }
   if (!Array.isArray(entries)) return next;
   for (let i = 0; i + 1 < entries.length; i += 2) {
     const name = entries[i];
@@ -47,23 +51,6 @@ function countsFromHash(entries: unknown): TallyCounts {
     }
   }
   return next;
-}
-
-async function redisCommand(config: RedisConfig, command: unknown[]) {
-  const response = await fetch(config.url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(command),
-    cache: "no-store",
-  });
-  if (!response.ok) {
-    throw new Error(`Tally store responded ${response.status}`);
-  }
-  const payload = (await response.json()) as { result?: unknown };
-  return payload.result;
 }
 
 let fileQueue: Promise<unknown> = Promise.resolve();
@@ -104,14 +91,12 @@ async function writeFileCounts(counts: TallyCounts) {
 /** Shared poll totals. Redis in production; a local JSON file in development
     so `next dev` still has somewhere to keep the running count. */
 export async function getTallyCounts(): Promise<TallyCounts> {
-  const redis = redisConfig();
   if (redis) {
-    const result = await redisCommand(redis, ["HGETALL", TALLY_KEY]);
-    return countsFromHash(result);
+    return countsFromHash(await redis.hgetall(TALLY_KEY));
   }
   if (process.env.VERCEL) {
     console.error(
-      "Accent tally needs KV_REST_API_URL and KV_REST_API_TOKEN (or the Upstash REST pair) in production.",
+      "Accent tally needs UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN (or the KV REST pair) in production.",
     );
     return emptyTallyCounts();
   }
@@ -122,13 +107,8 @@ export async function recordTallyVote(
   next: AccentName,
   previous: AccentName | null,
 ): Promise<TallyCounts> {
-  const redis = redisConfig();
   if (redis) {
-    const result = await redisCommand(redis, [
-      "EVAL",
-      VOTE_SCRIPT,
-      "1",
-      TALLY_KEY,
+    const result = await redis.eval(VOTE_SCRIPT, [TALLY_KEY], [
       previous ?? "",
       next,
     ]);

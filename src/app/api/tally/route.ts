@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { isAccentName } from "@/lib/accent";
 import { getTallyCounts, recordTallyVote } from "@/lib/tally-store";
 import { TALLY_VOTE_COOKIE, type Tally } from "@/lib/tally";
@@ -24,7 +25,7 @@ export async function GET() {
     counts: await getTallyCounts(),
     vote: voteFrom(jar.get(TALLY_VOTE_COOKIE)?.value),
   };
-  return Response.json(tally);
+  return NextResponse.json(tally);
 }
 
 export async function POST(request: Request) {
@@ -33,10 +34,10 @@ export async function POST(request: Request) {
     const body = (await request.json()) as { name?: unknown };
     name = body.name;
   } catch {
-    return Response.json({ error: "Expected JSON." }, { status: 400 });
+    return NextResponse.json({ error: "Expected JSON." }, { status: 400 });
   }
   if (typeof name !== "string" || !isAccentName(name)) {
-    return Response.json({ error: "Unknown accent." }, { status: 400 });
+    return NextResponse.json({ error: "Unknown accent." }, { status: 400 });
   }
 
   const jar = await cookies();
@@ -46,9 +47,12 @@ export async function POST(request: Request) {
     const counts = await recordTallyVote(name, previous);
     jar.set(TALLY_VOTE_COOKIE, name, cookieOptions);
     const tally: Tally = { counts, vote: name };
-    return Response.json(tally);
+    return NextResponse.json(tally);
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Tally is unavailable." }, { status: 503 });
+    return NextResponse.json(
+      { error: "Tally is unavailable." },
+      { status: 503 },
+    );
   }
 }
