@@ -62,13 +62,13 @@ export function AccentTally({
         {lead ? ` ${lead}` : ""}{" "}
         <a
           href="#change-experience"
-          className="hover:text-accent cursor-pointer"
+          className="cursor-pointer font-semibold hover:text-accent"
           onClick={(event) => {
             event.preventDefault();
             changeExperience();
           }}
         >
-          Want to change the experience?
+          Want to change it?
         </a>
       </p>
       <ul className="mt-6 flex flex-wrap gap-2">
