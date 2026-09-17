@@ -1,23 +1,30 @@
 type SvgProps = React.SVGProps<SVGSVGElement>;
 
+/**
+ * Reads --monogram-ring and --monogram-mark rather than Tailwind's
+ * --color-* aliases of them on purpose. An `@theme inline` alias is
+ * substituted once, at :root, so it inherits down as a flat color and an
+ * accent class deeper in the tree cannot reach it. The entry needs exactly
+ * that: five of these side by side, each in its own hue.
+ */
 export function Monogram(props: SvgProps) {
   return (
-    <svg viewBox="0 0 64 64" fill="none" aria-hidden {...props}>
-      <circle cx="32" cy="32" r="32" fill="var(--color-monogram-ring)" />
+    <svg viewBox="0 0 64 64" fill="none" overflow="visible" aria-hidden {...props}>
+      <circle cx="32" cy="32" r="32" fill="var(--monogram-ring)" />
       <path
         d="M31.4823 13.2891L31.7362 13.3066C32.3675 13.3816 33.246 13.7248 33.9052 14.9033C34.4113 15.8072 36.5559 20.2158 39.6317 26.668L39.993 27.4258L40.8309 27.3887H40.8319C41.2463 27.3707 41.6607 27.3613 42.0839 27.3613C43.8025 27.3613 45.5569 27.5166 47.3143 27.8203L48.0682 27.959V27.96C49.0558 28.1552 49.7019 29.1172 49.5067 30.1055L49.5057 30.1064C49.3357 30.9561 48.5891 31.5791 47.7186 31.5791C47.595 31.5791 47.4776 31.5666 47.3593 31.543V31.542C45.6375 31.203 43.9041 31.0303 42.2079 31.0303C35.1447 31.0303 29.4891 33.9634 25.576 36.9297C23.6209 38.4119 22.1065 39.8983 21.077 41.0205C20.5626 41.5813 20.1698 42.0506 19.9042 42.3818C19.6397 42.7116 19.5046 42.8991 19.5009 42.9043L19.496 42.9131L19.0878 42.624L19.495 42.9131C19.1542 43.3938 18.5956 43.6865 18.0028 43.6865C17.6813 43.6865 17.356 43.6017 17.0702 43.4277V43.4268C16.262 42.9476 15.949 41.9124 16.3573 41.0654L28.8759 15.002C28.903 14.9428 28.9335 14.8883 28.9618 14.8428L29.1405 14.5811C29.6079 13.9589 30.4279 13.2891 31.4735 13.2891H31.4823Z"
-        fill="var(--color-monogram-mark)"
-        stroke="var(--color-monogram-mark)"
+        fill="var(--monogram-mark)"
+        stroke="var(--monogram-mark)"
       />
       <path
         d="M33.0403 20.2432C33.9212 22.0492 34.9794 24.2579 35.971 26.334L36.8919 28.2646L34.8245 28.8086C32.4918 29.4239 30.1895 30.3487 27.9807 31.5615L23.1468 34.2139L31.4378 16.9453L33.0403 20.2432Z"
-        fill="var(--color-monogram-ring)"
-        stroke="var(--color-monogram-mark)"
+        fill="var(--monogram-ring)"
+        stroke="var(--monogram-mark)"
       />
       <path
         d="M43.3223 35.75C43.9095 35.7502 44.4403 36.0741 44.7158 36.585L44.7676 36.6895L44.7695 36.6943L46.9102 41.7158L46.9688 41.8662C47.2213 42.6254 46.8593 43.4692 46.1094 43.7998L46.1084 43.8008C45.9068 43.8886 45.6916 43.9365 45.4736 43.9365C44.8484 43.9365 44.28 43.5679 44.0273 42.9941L44.0264 42.9922L41.8848 37.9688L41.8291 37.8223C41.7166 37.4778 41.7245 37.1057 41.8525 36.7627L41.8535 36.7598C42.0055 36.3667 42.3005 36.0546 42.6855 35.8857H42.6865C42.8883 35.7978 43.1041 35.75 43.3223 35.75Z"
-        fill="var(--color-monogram-mark)"
-        stroke="var(--color-monogram-mark)"
+        fill="var(--monogram-mark)"
+        stroke="var(--monogram-mark)"
         strokeWidth="0.5"
       />
     </svg>

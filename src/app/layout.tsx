@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { BackToTop } from "@/components/back-to-top";
 import { SoundCues } from "@/components/sound-cues";
+import { accentScript } from "@/lib/accent";
 import { personJsonLd, siteDescription, siteName, siteUrl } from "@/lib/site";
 import { themeScript } from "@/lib/theme";
 import "./globals.css";
@@ -64,11 +65,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geist.variable} ${canela.variable}`}
-      // themeScript adds a theme class here before React hydrates.
+      // themeScript and accentScript add classes here before React hydrates.
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: accentScript }} />
       </head>
       <body>
         <script

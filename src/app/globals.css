@@ -26,6 +26,15 @@
   --campaign-ink-day: #384b26;
   --campaign-ink-night: #e8f4d4;
 
+  /* Ember belongs to no case study — it is the fifth monogram on the entry,
+     so its ramp is spelled out here rather than borrowed. Built the same way
+     as the three above: a tinted day canvas, a deep night one, and an ink
+     that flips between them. */
+  --ember-canvas-day: #fae4ce;
+  --ember-canvas-night: #2a1208;
+  --ember-ink-day: #702c13;
+  --ember-ink-night: #fae4ce;
+
   --strategy-canvas: light-dark(
     var(--strategy-canvas-day),
     var(--strategy-canvas-night)
@@ -44,12 +53,18 @@
     var(--campaign-canvas-night)
   );
   --campaign-ink: light-dark(var(--campaign-ink-day), var(--campaign-ink-night));
+  --ember-canvas: light-dark(
+    var(--ember-canvas-day),
+    var(--ember-canvas-night)
+  );
+  --ember-ink: light-dark(var(--ember-ink-day), var(--ember-ink-night));
 
   /* Semantic slots. light-dark() resolves against the inherited color-scheme,
      so the theme override below is the only switch either theme needs. */
   color-scheme: light dark;
 
   --canvas: light-dark(var(--cream), var(--espresso));
+  --canvas-day: var(--cream);
   --ink: light-dark(var(--espresso), var(--parchment));
   --muted: light-dark(var(--taupe), var(--parchment));
   --lede: light-dark(var(--taupe), var(--amber));
@@ -74,6 +89,21 @@
   --back-to-top-clearance: calc(
     var(--back-to-top-size) + var(--back-to-top-inset) * 2
   );
+
+  /* The entry's own surfaces (Figma nodes 89:6107 and 89:6173). Spelled out
+     from the raw palette instead of the semantic slots because the chosen
+     accent lands on <html> the instant the monogram drops, and the box and
+     the floor still have to hold their color while the stage falls away.
+     The design is light only; the night column keeps the stage honest under
+     the toggle. */
+  --entry-canvas: light-dark(var(--cream), var(--espresso));
+  --entry-ink: light-dark(var(--espresso), var(--parchment));
+  --entry-lid: light-dark(var(--parchment), #3b2116);
+  --entry-front: light-dark(var(--amber-soft), #4b2c1d);
+
+  /* The slot's mouth and the label are one value: ink at 70% over the lid is
+     the #695c56 the design uses for both. */
+  --entry-etch: color-mix(in oklab, var(--entry-ink) 70%, transparent);
 }
 
 @media (min-width: 80rem) {
@@ -90,6 +120,94 @@ html.theme-light {
 
 html.theme-dark {
   color-scheme: dark;
+}
+
+/* Accent palettes: the hue a visitor posted into the slot on the entry, set
+   by the pre-paint script from storage. A monogram picks the hue and the
+   toggle above still picks the time of day, which is the whole reason these
+   are light-dark() pairs rather than flat colors.
+
+   Tide, rose, and meadow deliberately reuse the case study ramps: the point
+   of the entry is choosing which of the site's worlds to walk into.
+
+   Unscoped on purpose, because these do two jobs. On <html> a class is the
+   whole site's palette; on one orbiting monogram in the entry it is that
+   monogram's swatch, which is how the five can each wear a different hue
+   with nothing but the shared <Monogram /> inside them. A bare class also
+   settles the collision with the case study block below on specificity
+   rather than source order: `html:has([data-case-study])` outweighs
+   `.accent-tide`, so a case study page keeps its own palette either way. */
+.accent-tide {
+  --canvas: var(--strategy-canvas);
+  --canvas-day: var(--strategy-canvas-day);
+  --ink: var(--strategy-ink);
+  --muted: var(--strategy-ink);
+  --lede: light-dark(#3a7e92, #97d9dd);
+  --accent: #97d9dd;
+  --rule: light-dark(var(--mist), #2d5a66);
+  --monogram-ring: #97d9dd;
+  --monogram-mark: light-dark(#3a7e92, #0f272e);
+}
+
+.accent-rose {
+  --canvas: var(--post-office-canvas);
+  --canvas-day: var(--post-office-canvas-day);
+  --ink: var(--post-office-ink);
+  --muted: var(--post-office-ink);
+  --lede: light-dark(#823d59, #f4aea0);
+  --accent: #f4aea0;
+  --rule: light-dark(var(--mist), #5f2c41);
+  --monogram-ring: #f4aea0;
+  --monogram-mark: light-dark(#823d59, #2b1220);
+}
+
+.accent-meadow {
+  --canvas: var(--campaign-canvas);
+  --canvas-day: var(--campaign-canvas-day);
+  --ink: var(--campaign-ink);
+  --muted: var(--campaign-ink);
+  --lede: light-dark(#384b26, #a9d750);
+  --accent: #a9d750;
+  --rule: light-dark(var(--mist), #3c5127);
+  --monogram-ring: #a9d750;
+  --monogram-mark: light-dark(#384b26, #18210f);
+}
+
+.accent-ember {
+  --canvas: var(--ember-canvas);
+  --canvas-day: var(--ember-canvas-day);
+  --ink: var(--ember-ink);
+  --muted: var(--ember-ink);
+  --lede: light-dark(#702c13, #ed822e);
+  --accent: #ed822e;
+  --rule: light-dark(#eccfb4, #5c2a14);
+  --monogram-ring: #ed622d;
+  --monogram-mark: light-dark(#702c13, #2a1208);
+}
+
+/* Amber is the root palette, so as a page it needs nothing. The two tokens
+   are here for the seat: the chosen accent lands on <html> while the stage is
+   still falling, and without these the amber monogram would inherit it and
+   change color on the way down. */
+.accent-amber {
+  --canvas-day: var(--cream);
+  --monogram-ring: light-dark(var(--amber-soft), var(--taupe));
+  --monogram-mark: light-dark(var(--amber), var(--espresso));
+}
+
+/* On the entry a circle is a swatch — it is the color being chosen, not a
+   logo being themed — so amber holds its daylight ring there instead of the
+   taupe the header monogram wears on a night page. Without this it is the one
+   grey disc among four vivid ones and reads as unavailable. The other four
+   hold their hue in both already.
+
+   Unlayered like the rule above it has to beat, because an unlayered
+   declaration outranks anything in @layer components no matter how specific
+   that is. This does not belong with the rest of the entry's styles. */
+.entry-seat.accent-amber,
+.entry-flood.accent-amber {
+  --monogram-ring: var(--amber-soft);
+  --monogram-mark: var(--amber);
 }
 
 /* Case study palettes (Figma nodes 31:2969, 33:531, 33:38). Each project owns
@@ -148,8 +266,11 @@ html:has([data-case-study="campaign-manager"]) {
   --color-lede: var(--lede);
   --color-accent: var(--accent);
   --color-rule: var(--rule);
-  --color-monogram-ring: var(--monogram-ring);
-  --color-monogram-mark: var(--monogram-mark);
+
+  /* --monogram-ring and --monogram-mark deliberately have no alias here.
+     `inline` substitutes once at :root, which would flatten them before an
+     accent class deeper in the tree could override them, and <Monogram />
+     is the only thing that reads either. It reads them raw. */
 
   /* Fixed regardless of theme: these sit on top of the card photos. */
   --color-label: #fffdf5;
@@ -179,6 +300,10 @@ html:has([data-case-study="campaign-manager"]) {
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    /* Keep the classic-scrollbar strip reserved so locking overflow on the
+       entry (and on dialogs) cannot widen the page, then shove it back when
+       the bar returns. Overlay scrollbars leave this as a no-op. */
+    scrollbar-gutter: stable;
   }
 
   html,
@@ -299,10 +424,11 @@ html:has([data-case-study="campaign-manager"]) {
   /* Items start translated down + blurred + invisible when nested in a
      .t-stagger that hasn't been shown yet; .is-shown flips them to rest.
      --stagger-i is the document-order index so the cascade reads top to
-     bottom, left to right. .is-hiding fades them out in place over 200ms,
-     independent of the entrance stagger so the exit doesn't replay it.
-     Hidden styles live on the parent so a .t-stagger-line outside a
-     stagger root stays visible. */
+     bottom, left to right. Removing .is-shown plays that motion in reverse
+     (the home page leaving for the intro). .is-hiding is a short in-place
+     fade for other exits that should not replay the stagger. Hidden styles
+     live on the parent so a .t-stagger-line outside a stagger root stays
+     visible. */
   .t-stagger-line {
     transition:
       opacity var(--stagger-dur) var(--stagger-ease),
@@ -327,6 +453,27 @@ html:has([data-case-study="campaign-manager"]) {
       transform 0s linear,
       filter 0s linear;
     transition-delay: 0s;
+  }
+
+  /* Home header monogram: CSS parks it above the fold for first paint so
+     JS can spring it in without a rest-pose flash. `is-landed` is the rest
+     after that spring, and noscript visitors skip the park. */
+  .home-monogram {
+    width: fit-content;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+
+  .home-monogram:not(.is-landed) {
+    translate: 0 calc(-100% * 1.6 - 2.5rem);
+  }
+
+  @media (scripting: none) {
+    .home-monogram:not(.is-landed) {
+      translate: none;
+    }
   }
 
   /* Native <dialog> fills the viewport so a click on the dimmed field is a
@@ -562,6 +709,270 @@ html:has([data-case-study="campaign-manager"]) {
     animation: password-field-shake 420ms var(--stagger-ease);
   }
 
+  /* The entry (Figma nodes 89:6107 and 89:6173). Five monograms drifting over
+     a ballot box, proportioned off that frame: every fraction below is one it
+     measured, so the stage scales with the viewport instead of snapping
+     between breakpoints. */
+  .monogram-entry {
+    position: fixed;
+    inset: 0;
+    z-index: 60; /* over the floating back-to-top */
+    overflow: hidden; /* the stage leaving through the bottom, and nothing else */
+
+    /* A monogram is 4.63% of the frame's width, and the pentagon they sit on
+       has a radius of 1.94 monograms. Sitting lower than the original frame
+       leaves room for the display-size headline above the cluster. */
+    --entry-mono: clamp(52px, 4.6vw, 78px);
+    --entry-orbit: calc(var(--entry-mono) * 1.94);
+    --entry-orbit-y: 48%;
+
+    /* The box: a front face 37% of the width, a lid 13.2% of that deep
+       tapering to 75.5% at the back edge, and a slot 28.6% across. */
+    --entry-box-w: clamp(272px, 37vw, 620px);
+    --entry-lid-depth: calc(var(--entry-box-w) * 0.132);
+    --entry-slot-w: calc(var(--entry-box-w) * 0.286);
+    --entry-front-y: 79.6%;
+    --entry-floor-y: 84.9%;
+  }
+
+  /* The chosen canvas. Sits over the stage, invisible until the floor has
+     fallen, then fades in across the whole viewport. Coming back the other
+     way, the same layer fades the intro cream over the themed page. */
+  .entry-flood {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--canvas);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 640ms var(--stagger-ease);
+  }
+
+  .monogram-entry[data-phase="wiping"] .entry-flood {
+    opacity: 1;
+  }
+
+  /* Way back: cover with the themed canvas (home already hidden), then
+     ease that fill to cream. Opacity stays 1 the whole time so the home
+     page cannot paint through. */
+  .monogram-entry[data-phase="returning"] .entry-flood {
+    background: var(--canvas);
+    opacity: 1;
+    transition: none;
+  }
+
+  .monogram-entry[data-phase="unwinding"] .entry-flood {
+    background: var(--entry-canvas);
+    opacity: 1;
+    transition: background-color 640ms var(--stagger-ease);
+  }
+
+  /* Snap off as the cream stage takes over so the flood does not sit on
+     top of the arriving monograms. Same color, so the cut is invisible. */
+  .monogram-entry[data-phase="gate"] .entry-flood {
+    transition: none;
+  }
+
+  .monogram-entry[data-phase="returning"] .entry-stage,
+  .monogram-entry[data-phase="unwinding"] .entry-stage {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Hide the flood the moment the page is uncovered, not on the React
+     phase change a frame later — that delay was a flash of the home page
+     popping in already shown, then staggering. Same color as the canvas
+     underneath, so this cut is invisible. */
+  html.entry-pending.entry-revealed .entry-flood,
+  .monogram-entry[data-phase="clearing"] .entry-flood {
+    opacity: 0;
+    transition: none;
+  }
+
+  .entry-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    /* Visible so a hover-scale or a float never shears a circle against the
+       frame. Arrival still reads as from the top: the seats start above the
+       viewport, and the viewport itself is the clip. */
+    overflow: visible;
+    background: var(--entry-canvas);
+    user-select: none;
+  }
+
+  /* Gravity: the whole cream page, box and all, falls out the bottom. */
+  .monogram-entry:is(
+      [data-phase="dropping"],
+      [data-phase="wiping"],
+      [data-phase="clearing"]
+    )
+    .entry-stage {
+    translate: 0 100%;
+    transition: translate 720ms cubic-bezier(0.32, 0, 0.67, 0);
+  }
+
+  .monogram-entry:is(
+    [data-phase="dropping"],
+    [data-phase="wiping"],
+    [data-phase="clearing"]
+  ) {
+    pointer-events: none;
+  }
+
+  /* Same size and weight as the home page's display heading, parked above
+     the cluster instead of on the box. */
+  .entry-headline {
+    position: absolute;
+    top: clamp(2.5rem, 8vh, 5.5rem);
+    left: 50%;
+    z-index: 1;
+    width: min(92vw, 11em);
+    color: var(--entry-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 100;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-align: center;
+    text-wrap: balance;
+    translate: -50% 0;
+    pointer-events: none;
+    transition: opacity 280ms var(--stagger-ease);
+  }
+
+  .monogram-entry:not([data-phase="gate"]) .entry-headline {
+    opacity: 0;
+  }
+
+  /* The floor the box stands on, in the same material as its lid. */
+  .entry-floor {
+    position: absolute;
+    top: var(--entry-floor-y);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: var(--entry-lid);
+  }
+
+  .entry-box {
+    position: absolute;
+    top: var(--entry-front-y);
+    bottom: 0;
+    left: 50%;
+    width: var(--entry-box-w);
+    background: var(--entry-front);
+    translate: -50% 0;
+  }
+
+  /* The lid, in the shallow perspective the design draws it in. */
+  .entry-lid {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: var(--entry-lid-depth);
+    background: var(--entry-lid);
+    clip-path: polygon(12.25% 0, 87.75% 0, 100% 100%, 0 100%);
+  }
+
+  .entry-slot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--entry-slot-w);
+    height: 5px;
+    border-radius: 9999px;
+    background: var(--entry-etch);
+    translate: -50% -50%;
+    transition: scale 200ms var(--stagger-ease);
+  }
+
+  /* A monogram is over the mouth and would land if it were let go. */
+  .entry-box.is-armed .entry-slot {
+    scale: 1.04 1.5;
+  }
+
+  .entry-orbit {
+    position: absolute;
+    top: var(--entry-orbit-y);
+    left: 50%;
+    width: calc(var(--entry-orbit) * 2);
+    aspect-ratio: 1;
+    /* A big transparent square across the middle of the stage; only the
+       monograms inside it should ever catch a pointer. */
+    pointer-events: none;
+    translate: -50% -50%;
+  }
+
+  /* A seat's resting place is the pentagon's center, and the drift loop
+     writes `translate` every frame to put it where it belongs. CSS keeps
+     `scale`, so the hover and the drift never fight over one transform. */
+  .entry-seat {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--entry-mono);
+    height: var(--entry-mono);
+    margin-top: calc(var(--entry-mono) / -2);
+    margin-left: calc(var(--entry-mono) / -2);
+    padding: 0;
+    border: 0;
+    border-radius: 9999px; /* so the focus ring follows the circle */
+    background: none;
+    color: inherit;
+    cursor: grab;
+    pointer-events: auto;
+    touch-action: none;
+    transition: scale 240ms var(--stagger-ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* The clip lives inside the button so the focus ring, which sits outside
+     the border box, survives it. Default sink is a negative inset so the
+     anti-aliased rim of a circle drawn to the viewBox edge is not sheared
+     off; the loop raises it when the disc actually crosses the slot. */
+  .entry-mark {
+    display: block;
+    overflow: visible;
+    clip-path: inset(-2px -2px var(--entry-sink, -2px) -2px);
+    -webkit-user-drag: none;
+  }
+
+  .entry-mark > svg {
+    display: block;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Enlarges slightly under the cursor, which is also when the drift stops. */
+  .entry-seat:is(:hover, :focus-visible) {
+    scale: 1.1;
+  }
+
+  .entry-seat.is-held,
+  .entry-seat.is-posted {
+    z-index: 1;
+  }
+
+  .entry-seat.is-held {
+    cursor: grabbing;
+    scale: 1.14;
+  }
+
+  /* Keeps the cursor's shape while the pointer is dragged off the monogram
+     it picked up. */
+  .entry-stage.is-holding {
+    cursor: grabbing;
+  }
+
+  .entry-seat.is-posted {
+    cursor: default;
+    scale: 1;
+    transition: scale 420ms var(--stagger-ease);
+  }
+
   @keyframes password-dialog-in {
     from {
       opacity: 0;
@@ -605,6 +1016,10 @@ html:has([data-case-study="campaign-manager"]) {
       transition: none !important;
     }
 
+    .home-monogram:not(.is-landed) {
+      translate: none;
+    }
+
     .password-dialog[open] .password-dialog-panel,
     .password-dialog[open]::backdrop,
     .shot-dialog[open] .shot-dialog-stage,
@@ -624,6 +1039,50 @@ html:has([data-case-study="campaign-manager"]) {
       transition: none !important;
       transform: none !important;
     }
+
+    /* The entry keeps the hover enlargement — that is a state, not a
+       flourish — but loses the easing on it. The drift, the float, and the
+       arrival from above are all skipped in the loop itself. */
+    .entry-seat,
+    .entry-mark,
+    .entry-slot,
+    .entry-headline {
+      transition: none !important;
+    }
+
+    .entry-flood {
+      opacity: 0;
+      transition: opacity 200ms linear;
+    }
+
+    .monogram-entry[data-phase="wiping"] .entry-flood {
+      opacity: 1;
+    }
+
+    .monogram-entry[data-phase="returning"] .entry-flood,
+    .monogram-entry[data-phase="unwinding"] .entry-flood {
+      opacity: 1;
+    }
+
+    .monogram-entry[data-phase="unwinding"] .entry-flood {
+      transition: background-color 200ms linear;
+    }
+
+    .monogram-entry[data-phase="returning"] .entry-flood,
+    .monogram-entry[data-phase="gate"] .entry-flood {
+      transition: none;
+    }
+
+    .monogram-entry:is(
+        [data-phase="dropping"],
+        [data-phase="wiping"],
+        [data-phase="clearing"]
+      )
+      .entry-stage {
+      opacity: 0;
+      translate: none;
+      transition: opacity 200ms linear;
+    }
   }
 }
 
@@ -636,6 +1095,54 @@ html:has(.shot-dialog[open]) {
 body:has(dialog[open]) .back-to-top {
   opacity: 0;
   pointer-events: none;
+}
+
+/* The gate, while it is up. `visibility` is everything a covered page needs:
+   nothing painted, nothing tabbable, nothing announced, and the layout still
+   settled so there is no shift when it comes back. The entry adds
+   `entry-revealed` once the base color covers the viewport, so the page is
+   already themed and painted underneath before that color clears. */
+html.entry-pending {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+html.entry-leaving {
+  overflow: hidden;
+}
+
+html.entry-leaving #site-shell {
+  pointer-events: none;
+}
+
+html.entry-pending #site-shell {
+  visibility: hidden;
+}
+
+html.entry-pending.entry-revealed #site-shell {
+  visibility: visible;
+}
+
+html.entry-pending .back-to-top {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Unlayered so it beats the hover utility while the mark is flying off. */
+.home-monogram.is-leaving {
+  pointer-events: none;
+}
+
+.home-monogram.is-leaving span {
+  opacity: 0;
+  transition: none;
+}
+
+/* First paint for a visitor who already chose, who has JavaScript off, or who
+   arrived on an unlock link: the markup is there, the entry is not. Past the
+   first paint the component owns its own presence. */
+html:not(.entry-pending) .monogram-entry {
+  display: none;
 }
 
 /* Unlayered so it beats w-full. Crops the 1px capture fringe on top/left. */

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AboutRow } from "@/components/about-row";
-import { Monogram } from "@/components/brand";
+import { HomeMonogram } from "@/components/home-monogram";
+import { MonogramEntry } from "@/components/monogram-entry";
 import { ProjectCard } from "@/components/project-card";
 import { SayHello } from "@/components/say-hello";
 import { SiteFooter } from "@/components/site-footer";
@@ -36,20 +37,22 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <WorkGate unlocked={unlocked} initialSlug={unlockSlug}>
-      <div className="flex min-h-dvh flex-col px-6 md:px-10 xl:px-[46px]">
+      {/* The id is what the entry hides behind itself while it is up, so the
+          shell still lays out and nothing shifts when it is uncovered. */}
+      <div
+        id="site-shell"
+        className="flex min-h-dvh flex-col px-6 md:px-10 xl:px-[46px]"
+      >
         <div className="mx-auto flex w-full max-w-[1636px] flex-1 flex-col">
-          <header className="flex items-start justify-between pt-8 xl:pt-[45px]">
-            <div>
-              <Monogram className="size-12 xl:size-16" />
-              <span className="sr-only">Andy O&rsquo;Dore</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <SayHello />
-            </div>
-          </header>
-
           <StaggerReveal className="flex flex-1 flex-col">
+            <header className="flex items-start justify-between pt-8 xl:pt-[45px]">
+              <HomeMonogram />
+              <div className="t-stagger-line flex items-center gap-4">
+                <ThemeToggle />
+                <SayHello />
+              </div>
+            </header>
+
             <main>
               <h1 className="t-stagger-line text-ink font-display text-display mt-10 max-w-[9.5em] font-thin text-balance xl:mt-16">
                 Great products start with curiosity and craft.
@@ -94,7 +97,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                   </p>
                 </AboutRow>
 
-                <hr className="border-rule my-10 xl:my-16" />
+                <hr className="t-stagger-line border-rule my-10 xl:my-16" />
 
                 <AboutRow label="The perspective">
                   <ul className="list-disc pl-[1.1em]">
@@ -104,7 +107,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                   </ul>
                 </AboutRow>
 
-                <hr className="border-rule my-10 xl:my-16" />
+                <hr className="t-stagger-line border-rule my-10 xl:my-16" />
 
                 <AboutRow label="The fun">
                   <p>
@@ -122,6 +125,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           </StaggerReveal>
         </div>
       </div>
+
+      <MonogramEntry />
     </WorkGate>
   );
 }
