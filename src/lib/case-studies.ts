@@ -12,6 +12,11 @@ export type CaseStudyShot = {
   width?: number;
   height?: number;
   kind?: "image" | "video";
+  /** Small credit under the shot, opening in a new tab. */
+  caption?: {
+    label: string;
+    href: string;
+  };
 };
 
 export type CaseStudySection = {
@@ -171,6 +176,10 @@ const shots = {
     alt: "The Atlassian Design System Spotlight usage page, with guidance for a single-step spotlight on a Jira board.",
     width: 3272,
     height: 1696,
+    caption: {
+      label: "Check it out",
+      href: "https://atlassian.design/components/spotlight/usage",
+    },
   },
   campaignHero: {
     src: "/images/campaign-manager-hero.webp",

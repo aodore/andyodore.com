@@ -11,9 +11,9 @@ import {
   useState,
   type ComponentProps,
 } from "react";
-import { CloseIcon } from "@/components/brand";
+import { ArrowUpRightIcon, CloseIcon } from "@/components/brand";
 import type { CaseStudyShot } from "@/lib/case-studies";
-import { dismissCues } from "@/lib/sound";
+import { dismissCues, linkCues } from "@/lib/sound";
 
 const OpenShot = createContext<{
   openAt: (index: number, origin?: OpenOrigin) => void;
@@ -369,18 +369,33 @@ export function ShotTrigger({
 
   return (
     <figure
-      className={`t-stagger-line overflow-hidden rounded-3xl${
-        open ? " invisible" : ""
-      }`}
+      className={`t-stagger-line${open ? " invisible" : ""}`}
     >
-      <button
-        type="button"
-        aria-label={`View image ${index + 1}: ${shot.alt}`}
-        className="block w-full cursor-zoom-in"
-        onClick={(event) => openFrom(event.currentTarget)}
-      >
-        <ShotImage shot={shot} className="h-auto w-full" />
-      </button>
+      <div className="overflow-hidden rounded-3xl">
+        <button
+          type="button"
+          aria-label={`View image ${index + 1}: ${shot.alt}`}
+          className="block w-full cursor-zoom-in"
+          onClick={(event) => openFrom(event.currentTarget)}
+        >
+          <ShotImage shot={shot} className="h-auto w-full" />
+        </button>
+      </div>
+      {shot.caption && (
+        <figcaption className="mt-3 text-right">
+          <a
+            href={shot.caption.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${shot.caption.label} (opens in a new tab)`}
+            className="inline-flex items-center gap-1 text-sm font-light transition-colors hover:text-ink"
+            {...linkCues}
+          >
+            {shot.caption.label}
+            <ArrowUpRightIcon className="size-3.5" />
+          </a>
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -571,6 +586,19 @@ function ShotFrame({
     >
       <div className="shot-chrome pointer-events-none absolute inset-0 z-10">
         <div className="pointer-events-auto absolute top-4 right-4 flex items-center gap-3 md:top-6 md:right-6">
+          {shot.caption && (
+            <a
+              href={shot.caption.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${shot.caption.label} (opens in a new tab)`}
+              className="mr-3 inline-flex items-center gap-1 text-[13px] leading-none font-light underline-offset-2 hover:underline"
+              {...linkCues}
+            >
+              {shot.caption.label}
+              <ArrowUpRightIcon className="size-3.5" />
+            </a>
+          )}
           <p
             aria-live="polite"
             className="text-[13px] leading-none tabular-nums"
