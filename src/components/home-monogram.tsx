@@ -21,8 +21,9 @@ export function HomeMonogram() {
   const lift = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const node = ref.current;
+    if (!node) return;
+    const el: HTMLButtonElement = node;
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
