@@ -35,7 +35,11 @@ export function ProjectCard({
           className="object-cover object-center motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.03]"
         />
         {isGatedWorkSlug(study.slug) && <PasswordBadge />}
-        <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
+        />
+        <figcaption className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 p-6">
           <span className="text-label text-lg leading-tight xl:text-2xl">
             {cardTitle ?? title}
           </span>
