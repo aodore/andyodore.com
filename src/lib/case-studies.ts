@@ -126,7 +126,7 @@ const shots = {
   },
   strategySnapshot: {
     src: "/images/strategy-collection-snapshot.webp",
-    alt: "A strategic snapshot for Olivia, with 29 of 40 focus areas needing attention, status bars, and latest updates on Model Lifecycle and MLOps.",
+    alt: "A strategic snapshot for Olivia, with 29 of 40 focus areas needing attention, status bars, and latest updates on Model Lifecycle and AI Platform.",
     width: 3272,
     height: 2990,
   },
