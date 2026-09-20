@@ -378,7 +378,19 @@ export function ShotTrigger({
           className="block w-full cursor-zoom-in"
           onClick={(event) => openFrom(event.currentTarget)}
         >
-          <ShotImage shot={shot} className="h-auto w-full" />
+          <ShotImage
+            shot={shot}
+            className={
+              shot.maxHeight
+                ? "h-auto w-full object-cover object-center"
+                : "h-auto w-full"
+            }
+            style={
+              shot.maxHeight
+                ? { maxHeight: shot.maxHeight }
+                : undefined
+            }
+          />
         </button>
       </div>
       {shot.caption && (

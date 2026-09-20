@@ -29,7 +29,10 @@ export function ProjectCard({
           // All three cards are inside the initial viewport from `lg` up, so the
           // other two load without waiting but without competing for preload.
           loading={priority ? undefined : "eager"}
-          className="object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.03]"
+          // Same as the case-study shots: Next's optimizer was recompressing
+          // the card photos and softening the type on the screens.
+          unoptimized
+          className="object-cover object-center motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.03]"
         />
         {isGatedWorkSlug(study.slug) && <PasswordBadge />}
         <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">

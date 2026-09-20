@@ -17,6 +17,8 @@ export type CaseStudyShot = {
     label: string;
     href: string;
   };
+  /** Caps the inline frame; the photo is cover-centered inside it. */
+  maxHeight?: number;
 };
 
 export type CaseStudySection = {
@@ -30,7 +32,10 @@ export type CaseStudySection = {
 const shots = {
   strategyTablet: {
     src: "/images/strategy-collection-tablet.webp",
-    alt: "Strategy Collection on a tablet, showing a portfolio summary alongside budget, cross-product, and OKR panels.",
+    alt: "A tablet on a wooden desk showing a Strategic Intelligence briefing, with a keyboard and pencil beside it.",
+    width: 3272,
+    height: 2454,
+    maxHeight: 1200,
   },
   strategyBriefingStand: {
     src: "/images/strategy-collection-briefing-stand.webp",
@@ -126,10 +131,11 @@ const shots = {
     height: 2990,
   },
   postOfficeHero: {
-    src: "/images/post-office-hero.webp",
-    alt: "A laptop on an orange chair showing Atlassian Home, with a Welcome Home spotlight, Getting started cards, and Frequently visited.",
+    src: "/images/post-office-desk.webp",
+    alt: "A laptop on a wooden cabinet showing Atlassian Home, with Getting started cards, Frequently visited, and a vase beside it.",
     width: 3272,
     height: 2454,
+    maxHeight: 1200,
   },
   postOfficeNoise: {
     src: "/images/post-office-noise.webp",
@@ -209,10 +215,11 @@ const shots = {
     },
   },
   campaignHero: {
-    src: "/images/campaign-manager-hero.webp",
-    alt: "A laptop on a green sofa showing the Instacart campaign builder on the Offer step, with shortcut rewards and earning conditions.",
+    src: "/images/campaign-manager-desk.webp",
+    alt: "A laptop on a wooden cabinet showing Instacart Brand overview, with spend and sales performance over the last 90 days.",
     width: 3272,
     height: 2454,
+    maxHeight: 1200,
   },
   campaignOffers: {
     src: "/images/campaign-manager-offers.webp",
@@ -316,7 +323,7 @@ export const caseStudies: CaseStudy[] = [
     meta: "Atlassian • Lead Product Designer • 2026",
     summary:
       "Setting design direction on Strategic Intelligence at Atlassian: an agent-first decision partner grounded in the teamwork graph.",
-    image: "/images/strategy-collection.webp",
+    image: "/images/strategy-collection-hero.webp",
     mark: AtlassianMark,
     tint: "bg-tile-strategy",
     palette: "palette-strategy-collection",
@@ -384,7 +391,7 @@ export const caseStudies: CaseStudy[] = [
     meta: "Atlassian • Lead Product Designer • 2025",
     summary:
       "Leading Courier, Post Office’s pattern library at Atlassian, and shipping @atlaskit/spotlight to unify in-product messaging.",
-    image: "/images/post-office.webp",
+    image: "/images/post-office-hero.webp",
     mark: AtlassianMark,
     tint: "bg-tile-post-office",
     palette: "palette-post-office",
@@ -436,7 +443,7 @@ export const caseStudies: CaseStudy[] = [
     meta: "Instacart • Staff Product Designer • 2024",
     summary:
       "A self-serve campaign builder for Instacart retailers that grew to $192M in gross merchandising value with 100% retailer adoption.",
-    image: "/images/campaign-manager.webp",
+    image: "/images/campaign-manager-hero.webp",
     mark: CampaignManagerMark,
     tint: "bg-tile-campaign",
     palette: "palette-campaign-manager",
