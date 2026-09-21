@@ -310,12 +310,12 @@ export type CaseStudy = {
   hero?: CaseStudyShot;
   /** Optional clip under the hero, in the same rounded frame as the stills. */
   heroClip?: CaseStudyShot;
-  /** The design cycles the work in a different order than the home grid. */
+  /** Neighbors in `caseStudies` order, wrapping around. */
   previous: CaseStudySlug;
   next: CaseStudySlug;
 };
 
-/** Home page order. Walking between case studies follows previous/next. */
+/** Home page, carousel arrows, and project nav all walk this order. */
 export const caseStudies: CaseStudy[] = [
   {
     slug: "strategy-collection",
@@ -327,8 +327,8 @@ export const caseStudies: CaseStudy[] = [
     mark: AtlassianMark,
     tint: "bg-tile-strategy",
     palette: "palette-strategy-collection",
-    previous: "post-office",
-    next: "campaign-manager",
+    previous: "campaign-manager",
+    next: "post-office",
     hero: shots.strategyTablet,
     heroClip: {
       src: "/images/strategy-collection-clip.mp4",
@@ -395,8 +395,8 @@ export const caseStudies: CaseStudy[] = [
     mark: AtlassianMark,
     tint: "bg-tile-post-office",
     palette: "palette-post-office",
-    previous: "campaign-manager",
-    next: "strategy-collection",
+    previous: "strategy-collection",
+    next: "campaign-manager",
     hero: shots.postOfficeHero,
     sections: [
       {
@@ -447,8 +447,8 @@ export const caseStudies: CaseStudy[] = [
     mark: CampaignManagerMark,
     tint: "bg-tile-campaign",
     palette: "palette-campaign-manager",
-    previous: "strategy-collection",
-    next: "post-office",
+    previous: "post-office",
+    next: "strategy-collection",
     hero: shots.campaignHero,
     sections: [
       {
