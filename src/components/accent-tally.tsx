@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AboutRow } from "@/components/about-row";
 import { Monogram } from "@/components/brand";
-import { accents } from "@/lib/accent";
+import { accents, changeExperience } from "@/lib/accent";
 import { hydrateAccentLog, TALLY_EVENT } from "@/lib/accent-log";
 import { type Tally, type TallyCounts } from "@/lib/tally";
 
@@ -23,10 +23,6 @@ function leadingCopy(counts: TallyCounts) {
     .map((accent) => accent.label)
     .join(", ");
   return `${head}, and ${tied[tied.length - 1].label} are tied.`;
-}
-
-function changeExperience() {
-  document.querySelector<HTMLButtonElement>(".home-monogram")?.click();
 }
 
 /** Sitewide running count of colors posted into the slot. Every drop adds

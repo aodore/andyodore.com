@@ -10,6 +10,7 @@ import { ShotLightbox, ShotTrigger } from "@/components/shot-lightbox";
 import { SiteFooter } from "@/components/site-footer";
 import { StaggerReveal } from "@/components/stagger-reveal";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { WorkLozenges } from "@/components/work-lozenges";
 import {
   caseStudies,
   caseStudyShots,
@@ -77,6 +78,11 @@ export default async function CaseStudyPage({
             <p className="t-stagger-line text-lede mt-3 text-base leading-snug font-light md:text-lg xl:mt-6 xl:text-2xl xl:leading-none">
               {study.meta}
             </p>
+            <WorkLozenges
+              tags={study.tags}
+              size="page"
+              className="t-stagger-line mt-4 xl:mt-5"
+            />
 
             <hr className="border-rule mt-10 xl:mt-16" />
 

@@ -52,10 +52,12 @@ const pattern = accents.map((accent) => accent.name).join("|");
  */
 export const accentScript = `try{var a=localStorage.getItem("${ACCENT_STORAGE_KEY}");var r=document.documentElement;if(/^(${pattern})$/.test(a||""))r.classList.add("accent-"+a);else if(!/[?&]unlock=/.test(location.search))r.classList.add("entry-pending")}catch(e){}`;
 
-/** The header monogram fires this when a visitor wants to pick again. First
-    the home page staggers off (`entry-leaving`); then this event raises the
-    gate. The accent class stays until cream has covered the themed page. */
 export const ENTRY_REOPEN_EVENT = "entry:reopen";
+
+/** The disc in the header (and the tally link) fire this so the home mark
+    can fly off and stagger the page out before `ENTRY_REOPEN_EVENT` raises
+    the gate. */
+export const ENTRY_LEAVE_EVENT = "entry:leave";
 
 /** Marks the home page as staggering out. The overlay stays down until
     that motion (and the header mark flying off) has finished. */
@@ -73,4 +75,10 @@ export function reopenEntry() {
   root.classList.remove("entry-revealed", "entry-leaving");
   root.classList.add("entry-pending");
   window.dispatchEvent(new Event(ENTRY_REOPEN_EVENT));
+}
+
+/** Ask the header mark to fly off and raise the entry. The mark owns the
+    stagger-out, so this is an event rather than a direct call to reopen. */
+export function changeExperience() {
+  window.dispatchEvent(new Event(ENTRY_LEAVE_EVENT));
 }

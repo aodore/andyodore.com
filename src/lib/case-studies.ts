@@ -292,10 +292,12 @@ const shots = {
 export type CaseStudy = {
   slug: CaseStudySlug;
   title: string;
-  /** The home page card sets it in sentence case, matching the design. */
-  cardTitle?: string;
   /** Company, role, and year, on the line under the title. */
   meta: string;
+  /** Ghost chips on the home card and under the case-study meta line. */
+  tags: string[];
+  /** The mark on the home card. Hovering it names the company. */
+  company: string;
   /** For the page description. Not in the design file. */
   summary: string;
   /** Portrait card art for the home page grid. */
@@ -321,6 +323,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "strategy-collection",
     title: "Strategy Collection",
     meta: "Atlassian • Lead Product Designer • 2026",
+    tags: ["Pre-PMF", "AI-native", "Leadership vision"],
+    company: "Atlassian",
     summary:
       "Setting design direction on Strategic Intelligence at Atlassian: an agent-first decision partner grounded in the teamwork graph.",
     image: "/images/strategy-collection-hero.webp",
@@ -389,6 +393,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "post-office",
     title: "Post Office",
     meta: "Atlassian • Lead Product Designer • 2025",
+    tags: ["Platform", "Design system", "Adopted org-wide"],
+    company: "Atlassian",
     summary:
       "Leading Courier, Post Office’s pattern library at Atlassian, and shipping @atlaskit/spotlight to unify in-product messaging.",
     image: "/images/post-office-hero.webp",
@@ -439,8 +445,9 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "campaign-manager",
     title: "Campaign Manager",
-    cardTitle: "Campaign manager",
     meta: "Instacart • Staff Product Designer • 2024",
+    tags: ["0-to-1", "Marketplace platform", "$192M attributed GMV"],
+    company: "Instacart",
     summary:
       "A self-serve campaign builder for Instacart retailers that grew to $192M in gross merchandising value with 100% retailer adoption.",
     image: "/images/campaign-manager-hero.webp",

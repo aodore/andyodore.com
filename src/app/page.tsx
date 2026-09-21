@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AboutRow } from "@/components/about-row";
 import { AccentTally } from "@/components/accent-tally";
+import { ExperienceToggle } from "@/components/experience-toggle";
 import { HomeMonogram } from "@/components/home-monogram";
 import { MonogramEntry } from "@/components/monogram-entry";
 import { ProjectCard } from "@/components/project-card";
@@ -19,10 +20,10 @@ import { getTallyCounts } from "@/lib/tally-store";
 import { hasWorkAccess } from "@/lib/work-session";
 
 const perspective = [
-  "I run my work like it's my own business.",
-  "I build what users actually need and what\u2019s good for the business.",
-  "I like working with people who will challenge me and have fun.",
-  "I build foundations \u2013 ones that last.",
+  "I run my work like it\u2019s my own business.",
+  "I go find the problem. I don\u2019t wait for the brief.",
+  "I\u2019ve worked at every stage, pre-PMF to post-IPO. Same craft either way.",
+  "I build foundations. The good ones outlive the thing they were built for.",
 ];
 
 export default async function Home({ searchParams }: PageProps<"/">) {
@@ -52,6 +53,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             <header className="flex items-start justify-between pt-8 xl:pt-[45px]">
               <HomeMonogram />
               <div className="t-stagger-line flex items-center gap-4">
+                <ExperienceToggle />
                 <ThemeToggle />
                 <SayHello />
               </div>
@@ -62,8 +64,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                 Great products start with curiosity and craft.
               </h1>
               <p className="t-stagger-line text-lede mt-4 text-base leading-snug font-light md:text-lg xl:mt-6 xl:text-2xl">
-                I build systems and foundations that let organizations scale
-                without losing either.
+                I&rsquo;m Andy, a product designer. I&rsquo;m most useful when
+                the problem is complex, the domain is broad, and the answer
+                isn&rsquo;t obvious yet.
               </p>
 
               <section
@@ -84,20 +87,19 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                   <p>
                     Currently at{" "}
                     <strong className="font-semibold">Atlassian</strong>, I&rsquo;m
-                    setting design direction on Strategy Collection, building
-                    AI-native systems that sharpen how leaders make decisions.
-                    Before that, I spent time at{" "}
-                    <strong className="font-semibold">Instacart</strong>, growing a
-                    marketing platform from a 4-retailer pilot to $192M in
-                    attributed revenue, and at{" "}
-                    <strong className="font-semibold">Meta</strong>, envisioning
-                    career growth, hiring, and workforce planning tools used across
-                    its global workforce. Earlier still, I was at{" "}
-                    <strong className="font-semibold">Curalate</strong>, a startup,
-                    as one of the first product designers there, building the design
-                    org from the ground up as the company scaled toward acquisition.
-                    I started in branding and identity design, a foundation that
-                    still shapes how I approach every project.
+                    setting design direction on Strategy Collection, an AI-native
+                    system that sharpens how leaders make decisions. Before that,
+                    at <strong className="font-semibold">Instacart</strong>, I grew
+                    a marketing platform from a four-retailer pilot to $192M in
+                    attributed revenue. At{" "}
+                    <strong className="font-semibold">Meta</strong>, I designed the
+                    career growth, hiring, and workforce planning tools used by
+                    every employee in the company. Earlier still, I was one of the first
+                    product designers at{" "}
+                    <strong className="font-semibold">Curalate</strong>, a martech
+                    startup, where I hired and led a team as the company scaled
+                    toward acquisition. I started in branding and identity design,
+                    a foundation that still shapes how I approach every project.
                   </p>
                 </AboutRow>
 
@@ -116,8 +118,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                 <AboutRow label="The fun">
                   <p>
                     Outside of work, you&rsquo;ll find me being a girl dad to my
-                    three daughters, swinging a golf club when I can, and telling a
-                    dad joke whether you asked for one or not.
+                    three daughters, running long distances on purpose, making
+                    Neapolitan pizza, and telling a dad joke whether you asked for
+                    one or not.
                   </p>
                 </AboutRow>
 

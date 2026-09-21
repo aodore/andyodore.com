@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { Monogram } from "@/components/brand";
-import { leaveHome, reopenEntry } from "@/lib/accent";
-import { quietCues } from "@/lib/sound";
+import {
+  ENTRY_LEAVE_EVENT,
+  leaveHome,
+  reopenEntry,
+} from "@/lib/accent";
+import { linkCues } from "@/lib/sound";
 
 /** Same spring the intro seats use on the way in: under-damped, so the
     header mark lands with a small overshoot instead of creeping in. */
@@ -14,16 +19,15 @@ const DAMPING = 12;
 const PARK_SIZES = 1.6;
 const PARK_PAD = 40;
 
-/** The header mark on the home page. Decorative until a choice is stored,
-    then it is how you go back and pick again. */
+/** The header mark on the home page. It drops in from the entry, then
+    sits as the home link. The disc in the header is how you pick again. */
 export function HomeMonogram() {
-  const ref = useRef<HTMLButtonElement>(null);
-  const lift = useRef<(() => void) | null>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-    const el: HTMLButtonElement = node;
+    const el: HTMLAnchorElement = node;
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -142,7 +146,7 @@ export function HomeMonogram() {
       reopenEntry();
     }
 
-    lift.current = liftOff;
+    window.addEventListener(ENTRY_LEAVE_EVENT, liftOff);
 
     const doc = document.documentElement;
     let pending = doc.classList.contains("entry-pending");
@@ -168,28 +172,21 @@ export function HomeMonogram() {
     observer.observe(doc, { attributes: true, attributeFilter: ["class"] });
 
     return () => {
-      lift.current = null;
+      window.removeEventListener(ENTRY_LEAVE_EVENT, liftOff);
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <button
+    <Link
       ref={ref}
-      type="button"
-      className="home-monogram group relative cursor-pointer"
-      aria-label="Change your experience"
-      onClick={() => lift.current?.()}
-      {...quietCues}
+      href="/"
+      aria-label="Home"
+      className="home-monogram relative"
+      {...linkCues}
     >
       <Monogram className="size-12 xl:size-16" />
-      <span
-        aria-hidden
-        className="bg-ink text-canvas pointer-events-none absolute top-1/2 left-full z-10 ml-3 -translate-y-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-      >
-        Change your experience?
-      </span>
-    </button>
+    </Link>
   );
 }
