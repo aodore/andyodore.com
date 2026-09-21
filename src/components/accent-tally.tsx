@@ -73,7 +73,7 @@ export function AccentTally({
             key={accent.name}
             className={`accent-${accent.name} scheme-light flex items-center gap-3 rounded-full bg-white py-2 pr-4 pl-2`}
           >
-            <Monogram className="size-16 sm:size-[72px] xl:size-[90px]" />
+            <Monogram className="size-8 sm:size-9 xl:size-[45px]" />
             <span className="text-[var(--espresso)] tabular-nums">
               {counts[accent.name]}
             </span>

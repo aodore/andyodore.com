@@ -393,7 +393,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "post-office",
     title: "Post Office",
     meta: "Atlassian • Lead Product Designer • 2025",
-    tags: ["Platform", "Design system", "Adopted org-wide"],
+    tags: ["Platform", "Design system", "Adopted company-wide"],
     company: "Atlassian",
     summary:
       "Leading Courier, Post Office’s pattern library at Atlassian, and shipping @atlaskit/spotlight to unify in-product messaging.",

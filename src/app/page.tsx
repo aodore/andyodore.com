@@ -94,7 +94,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                     attributed revenue. At{" "}
                     <strong className="font-semibold">Meta</strong>, I designed the
                     career growth, hiring, and workforce planning tools used by
-                    every employee in the company. Earlier still, I was one of the first
+                    every employee. Earlier still, I was one of the first
                     product designers at{" "}
                     <strong className="font-semibold">Curalate</strong>, a martech
                     startup, where I hired and led a team as the company scaled
