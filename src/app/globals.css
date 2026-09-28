@@ -226,7 +226,7 @@ html.theme-dark {
    out per project because the shared dark value is a warm brown that fights
    every project hue; the accent and the monogram ring hold their pastel in
    both, since both read against either canvas. */
-html:has([data-case-study="strategy-collection"]) {
+html:has([data-case-study="strategic-intelligence"]) {
   --canvas: var(--strategy-canvas);
   --ink: var(--strategy-ink);
   --muted: var(--strategy-ink);
@@ -531,8 +531,13 @@ html:has([data-case-study="campaign-manager"]) {
   /* Image lightbox: no card. The shot flies from its thumbnail while
      the sampled field blankets in on the same beat. */
   .shot-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100dvh;
+    max-width: none;
+    margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: transparent;
@@ -610,17 +615,18 @@ html:has([data-case-study="campaign-manager"]) {
   .shot-dialog.is-open .shot-hero {
     border-radius: 1.5rem;
     transform: none;
+    opacity: 1;
     transition:
       transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-radius 560ms cubic-bezier(0.22, 1, 0.36, 1);
+      border-radius 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 560ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .shot-dialog.is-exit-image .shot-hero {
-    border-radius: var(--shot-radius, 1.5rem);
-    transform: var(--shot-flip, translate3d(0, 30vh, 0));
-    transition:
-      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-radius 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity: 0;
+    transform: none;
+    border-radius: 1.5rem;
+    transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .shot-dialog.is-enter-prep,
@@ -640,9 +646,12 @@ html:has([data-case-study="campaign-manager"]) {
   .shot-dialog.is-exit-image .shot-slide,
   .shot-dialog.is-enter-prep .shot-slide-scroll,
   .shot-dialog.is-enter-image .shot-slide-scroll,
-  .shot-dialog.is-enter-play .shot-slide-scroll,
-  .shot-dialog.is-exit-image .shot-slide-scroll {
+  .shot-dialog.is-enter-play .shot-slide-scroll {
     overflow: visible;
+  }
+
+  .shot-dialog.is-exit-image .shot-slide.is-settled .shot-slide-scroll {
+    overflow: hidden;
   }
 
   .shot-dialog-control {
@@ -656,6 +665,152 @@ html:has([data-case-study="campaign-manager"]) {
     color: var(--espresso);
     cursor: pointer;
     box-shadow: none;
+  }
+
+  .shot-notes {
+    --shot-notes-width: min(28rem, 40vw);
+    position: relative;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--canvas);
+    color: var(--ink);
+    transform: translateX(0);
+    transition:
+      width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-notes.is-open {
+    width: var(--shot-notes-width);
+    pointer-events: auto;
+  }
+
+  .shot-notes.is-resizing {
+    transition: none;
+    user-select: none;
+  }
+
+  .shot-dialog.is-exit-image .shot-notes.is-open {
+    transform: translateX(100%);
+    pointer-events: none;
+    transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-notes-inner {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1.5rem 1.75rem 2.5rem;
+    scrollbar-gutter: auto;
+  }
+
+  .shot-notes-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    width: 12px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: col-resize;
+    touch-action: none;
+  }
+
+  .shot-notes-handle::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background: color-mix(in oklab, var(--ink) 14%, transparent);
+    transition:
+      width 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .shot-notes-handle:hover::after,
+  .shot-notes-handle:focus-visible::after,
+  .shot-notes.is-resizing .shot-notes-handle::after {
+    width: 2px;
+    background: var(--accent);
+  }
+
+  .shot-note-caption {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    width: 100%;
+    border: 0;
+    border-left: 2px solid transparent;
+    margin-left: -0.75rem;
+    padding: 0 0 0 0.75rem;
+    background: none;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.55;
+  }
+
+  .shot-note-caption svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    margin-top: 0.35em;
+  }
+
+  .shot-note-caption:hover,
+  .shot-note-caption.is-current {
+    opacity: 1;
+  }
+
+  .shot-note-caption.is-current {
+    border-left-color: var(--accent);
+  }
+
+  @media (max-width: 767px) {
+    .shot-notes {
+      position: absolute;
+      inset: 0 0 0 auto;
+      z-index: 15;
+      width: 0;
+      --shot-notes-width: min(22.5rem, 86vw);
+      transform: translateX(100%);
+      transition:
+        width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .shot-notes.is-open {
+      width: var(--shot-notes-width);
+      transform: none;
+    }
+
+    .shot-dialog-stage.has-notes .shot-chrome {
+      padding-right: calc(var(--shot-notes-width) + 1rem);
+    }
+
+    .shot-dialog-stage.has-notes .shot-lift::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 12;
+      background: color-mix(
+        in oklab,
+        var(--shot-field, var(--canvas)) 48%,
+        transparent
+      );
+      pointer-events: none;
+    }
   }
 
   .shot-slide {
@@ -687,11 +842,24 @@ html:has([data-case-study="campaign-manager"]) {
     width: 100%;
     min-height: 100%;
     flex: 1 0 auto;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-bottom: 4rem;
     backface-visibility: hidden;
     transform: translate3d(0, 0, 0);
     transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot-slide-frame {
+    width: 100%;
+    margin-block: auto;
+  }
+
+  @media (min-width: 768px) {
+    .shot-slide-track {
+      padding-bottom: 4.5rem;
+    }
   }
 
   .shot-slide-track.is-parked {
@@ -1047,6 +1215,10 @@ html:has([data-case-study="campaign-manager"]) {
       transition: none !important;
     }
 
+    .shot-notes {
+      transition: none !important;
+    }
+
     .shot-slide-track {
       transition: none !important;
       transform: none !important;
@@ -1102,6 +1274,11 @@ html:has([data-case-study="campaign-manager"]) {
    and would otherwise sit on top of the dimmed field. */
 html:has(.shot-dialog[open]) {
   overflow: hidden;
+  /* The page reserves a classic-scrollbar gutter so the layout does not jump
+     when overflow is locked. That strip sits on the right of the lightbox
+     while it is open; drop it for the duration so the notes panel can meet
+     the window edge. The gutter returns with the page scrollbar on close. */
+  scrollbar-gutter: auto;
 }
 
 body:has(dialog[open]) .back-to-top {
@@ -1167,6 +1344,6 @@ html:not(.entry-pending) .monogram-entry {
 /* Unlayered so it beats w-full. Crops the 1px capture fringe on top/left. */
 video.shot-clip {
   width: calc(100% + 1px);
-  max-width: none;
+  max-width: calc(1636px + 1px);
   margin: -1px 0 0 -1px;
 }

@@ -143,6 +143,61 @@ export function CloseIcon(props: SvgProps) {
   );
 }
 
+export function SidebarIcon(props: SvgProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <rect x="2" y="2.5" width="12" height="11" rx="1.5" />
+      <path d="M10 2.5v11" />
+    </svg>
+  );
+}
+
+export function PresentationIcon(props: SvgProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M12 16v4M8 20h8" />
+    </svg>
+  );
+}
+
+export function ImageIcon(props: SvgProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <rect x="2" y="3" width="12" height="10" rx="1.5" />
+      <circle cx="5.5" cy="6.25" r="1" />
+      <path d="M2.5 11.5 6 8.5l2.5 2 2-1.75 3 2.75" />
+    </svg>
+  );
+}
+
 export function EyeIcon(props: SvgProps) {
   return (
     <svg

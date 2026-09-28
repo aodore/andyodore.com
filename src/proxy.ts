@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isGatedWorkSlug } from "@/lib/gated-work";
+import { canonicalWorkSlug, isGatedWorkSlug } from "@/lib/gated-work";
 import { WORK_ACCESS_COOKIE, hasWorkAccessFrom } from "@/lib/work-access";
 
 export async function proxy(request: NextRequest) {
   const slug = request.nextUrl.pathname.split("/")[2] ?? "";
+  const canonical = canonicalWorkSlug(slug);
+  if (canonical !== slug) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/work/${canonical}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   if (!isGatedWorkSlug(slug)) return NextResponse.next();
 
   const unlocked = await hasWorkAccessFrom(

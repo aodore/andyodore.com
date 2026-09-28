@@ -11,15 +11,17 @@ import {
   useState,
   type ComponentProps,
 } from "react";
-import { ArrowUpRightIcon, CloseIcon } from "@/components/brand";
-import type { CaseStudyShot } from "@/lib/case-studies";
-import { dismissCues, linkCues } from "@/lib/sound";
+import { ArrowUpRightIcon, CloseIcon, ImageIcon, PresentationIcon, SidebarIcon } from "@/components/brand";
+import type { CaseStudyGuide, CaseStudyGuideBlock, CaseStudyShot } from "@/lib/case-studies";
+import { dismissCues, linkCues, quietCues } from "@/lib/sound";
 
 const OpenShot = createContext<{
   openAt: (index: number, origin?: OpenOrigin) => void;
+  jumpTo: (index: number) => void;
   openIndex: number | null;
 }>({
   openAt: () => {},
+  jumpTo: () => {},
   openIndex: null,
 });
 
@@ -52,9 +54,24 @@ type Presence =
 const SLIDE_MS = 480;
 const LIFT_MS = 560;
 const DRAG_PX = 48;
+const NOTES_MIN = 256;
 
 function isVideoShot(shot: CaseStudyShot) {
   return shot.kind === "video";
+}
+
+function isPlaceholderShot(shot: CaseStudyShot) {
+  return shot.kind === "placeholder";
+}
+
+function clampNotesWidth(width: number) {
+  const vw = window.innerWidth;
+  const min = Math.min(NOTES_MIN, Math.round(vw * 0.4));
+  const max =
+    vw < 768
+      ? Math.round(vw * 0.9)
+      : Math.min(Math.round(vw * 0.7), vw - 320);
+  return Math.round(Math.min(max, Math.max(min, width)));
 }
 
 function destRect(img: HTMLElement) {
@@ -79,9 +96,11 @@ function flipFromOrigin(img: HTMLElement, from: OpenOrigin) {
 
 export function ShotLightbox({
   shots,
+  guide,
   children,
 }: {
   shots: CaseStudyShot[];
+  guide?: CaseStudyGuide;
   children: React.ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -91,6 +110,7 @@ export function ShotLightbox({
   const [leaving, setLeaving] = useState<ShotTransit | null>(null);
   const [phase, setPhase] = useState<SlidePhase>("idle");
   const [presence, setPresence] = useState<Presence>("closed");
+  const [notesOpen, setNotesOpen] = useState(true);
   const origin = useRef<OpenOrigin | null>(null);
   const [flip, setFlip] = useState({
     flip: "translate3d(0, 30vh, 0)",
@@ -115,6 +135,7 @@ export function ShotLightbox({
     setPresence("closed");
     origin.current = null;
     pendingField.current = null;
+    setNotesOpen(true);
   }, []);
 
   const requestClose = useCallback(() => {
@@ -132,6 +153,7 @@ export function ShotLightbox({
   function openAt(next: number, from?: OpenOrigin) {
     origin.current = from ?? null;
     setIndex(next);
+    setNotesOpen(true);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPresence("open");
       return;
@@ -226,6 +248,24 @@ export function ShotLightbox({
     setIndex((index + delta + shots.length) % shots.length);
   }
 
+  function jumpTo(next: number) {
+    if (
+      shots.length === 0 ||
+      index === null ||
+      next === index ||
+      phase !== "idle" ||
+      presence !== "open"
+    ) {
+      return;
+    }
+    setDirection(next > index ? 1 : -1);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setLeaving({ shot: shots[index], index });
+      setPhase("park");
+    }
+    setIndex(next);
+  }
+
   function applyField(next: ShotField) {
     if (phase === "idle") {
       setField(next);
@@ -235,7 +275,14 @@ export function ShotLightbox({
   }
 
   return (
-    <OpenShot.Provider value={{ openAt, openIndex: index }}>
+    <OpenShot.Provider
+      value={{
+        openAt,
+        jumpTo,
+        openIndex:
+          presence === "exit-image" || presence === "closed" ? null : index,
+      }}
+    >
       {children}
       <dialog
         ref={dialog}
@@ -255,10 +302,19 @@ export function ShotLightbox({
         }
         onCancel={(event) => {
           event.preventDefault();
+          if (notesOpen) {
+            setNotesOpen(false);
+            return;
+          }
           requestClose();
         }}
         onClick={(event) => {
-          if (event.target === dialog.current) requestClose();
+          if (event.target !== dialog.current) return;
+          if (notesOpen) {
+            setNotesOpen(false);
+            return;
+          }
+          requestClose();
         }}
         onKeyDown={(event) => {
           if (event.key === "ArrowRight") {
@@ -269,6 +325,10 @@ export function ShotLightbox({
             step(-1);
           } else if (event.key === "Escape") {
             event.preventDefault();
+            if (notesOpen) {
+              setNotesOpen(false);
+              return;
+            }
             requestClose();
           }
         }}
@@ -283,6 +343,9 @@ export function ShotLightbox({
             phase={phase}
             shots={shots}
             canDrag={presence === "open"}
+            guide={guide}
+            notesOpen={notesOpen}
+            onToggleNotes={() => setNotesOpen((open) => !open)}
             onClose={requestClose}
             onStep={step}
             onField={applyField}
@@ -291,6 +354,45 @@ export function ShotLightbox({
         )}
       </dialog>
     </OpenShot.Provider>
+  );
+}
+
+export function PresentationLaunch() {
+  const { openAt } = useContext(OpenShot);
+
+  function open() {
+    const first = document.querySelector<HTMLElement>(
+      '[aria-label^="View image 1:"], [aria-label^="View film 1:"]',
+    );
+    if (first) {
+      const rect = first.getBoundingClientRect();
+      openAt(0, {
+        x: rect.left,
+        y: rect.top,
+        w: rect.width,
+        h: rect.height,
+      });
+      return;
+    }
+    openAt(0);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={open}
+      aria-label="Open presentation"
+      className="bg-accent text-ink group relative grid size-11 cursor-pointer place-items-center rounded-full motion-safe:transition-transform motion-safe:duration-300 xl:size-14"
+      {...quietCues}
+    >
+      <PresentationIcon className="size-4 xl:size-6" />
+      <span
+        aria-hidden
+        className="bg-ink text-canvas pointer-events-none absolute top-full left-1/2 z-10 mt-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+      >
+        Presentation mode
+      </span>
+    </button>
   );
 }
 
@@ -329,40 +431,41 @@ export function ShotTrigger({
   if (isVideoShot(shot)) {
     return (
       <figure
-        className={`t-stagger-line relative overflow-hidden rounded-3xl${
-          open ? " invisible" : ""
-        }`}
+        className={`t-stagger-line${open ? " invisible" : ""}`}
       >
-        <video
-          ref={video}
-          src={shot.src}
-          width={shot.width}
-          height={shot.height}
-          autoPlay
-          muted={muted}
-          loop
-          playsInline
-          preload="metadata"
-          className="shot-clip h-auto w-full cursor-zoom-in"
-          aria-label={`View film ${index + 1}: ${shot.alt}`}
-          onClick={(event) => openFrom(event.currentTarget)}
-        />
-        <button
-          type="button"
-          aria-label={muted ? "Unmute" : "Mute"}
-          className="shot-dialog-control absolute bottom-4 left-4 z-10"
-          onClick={() => {
-            const node = video.current;
-            const next = !muted;
-            setMuted(next);
-            if (node) {
-              node.muted = next;
-              if (!next) void node.play().catch(() => {});
-            }
-          }}
-        >
-          <SpeakerIcon off={muted} className="size-4" />
-        </button>
+        <div className="relative overflow-hidden rounded-3xl">
+          <video
+            ref={video}
+            src={shot.src}
+            width={shot.width}
+            height={shot.height}
+            autoPlay
+            muted={muted}
+            loop
+            playsInline
+            preload="metadata"
+            className="shot-clip h-auto w-full cursor-zoom-in"
+            aria-label={`View film ${index + 1}: ${shot.alt}`}
+            onClick={(event) => openFrom(event.currentTarget)}
+          />
+          <button
+            type="button"
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="shot-dialog-control absolute bottom-4 left-4 z-10"
+            onClick={() => {
+              const node = video.current;
+              const next = !muted;
+              setMuted(next);
+              if (node) {
+                node.muted = next;
+                if (!next) void node.play().catch(() => {});
+              }
+            }}
+          >
+            <SpeakerIcon off={muted} className="size-4" />
+          </button>
+        </div>
+        <ShotCaption shot={shot} />
       </figure>
     );
   }
@@ -382,33 +485,51 @@ export function ShotTrigger({
             shot={shot}
             className={
               shot.maxHeight
-                ? "h-auto w-full object-cover object-center"
+                ? "h-auto w-full object-cover"
                 : "h-auto w-full"
             }
             style={
               shot.maxHeight
-                ? { maxHeight: shot.maxHeight }
+                ? {
+                    maxHeight: shot.maxHeight,
+                    objectPosition: shot.objectPosition ?? "center",
+                  }
                 : undefined
             }
           />
         </button>
       </div>
-      {shot.caption && (
-        <figcaption className="mt-3 text-right">
-          <a
-            href={shot.caption.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${shot.caption.label} (opens in a new tab)`}
-            className="inline-flex items-center gap-1 text-sm font-light transition-colors hover:text-ink"
-            {...linkCues}
-          >
-            {shot.caption.label}
-            <ArrowUpRightIcon className="size-3.5" />
-          </a>
-        </figcaption>
-      )}
+      <ShotCaption shot={shot} />
     </figure>
+  );
+}
+
+function ShotCaption({ shot }: { shot: CaseStudyShot }) {
+  if (!shot.caption) return null;
+  const { label, href } = shot.caption;
+
+  if (href) {
+    return (
+      <figcaption className="mt-3 text-right">
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${label} (opens in a new tab)`}
+          className="inline-flex items-center gap-1 text-sm font-light transition-colors hover:text-ink"
+          {...linkCues}
+        >
+          {label}
+          <ArrowUpRightIcon className="size-3.5" />
+        </a>
+      </figcaption>
+    );
+  }
+
+  return (
+    <figcaption className="text-lede mt-3 text-sm leading-snug font-light">
+      {label}
+    </figcaption>
   );
 }
 
@@ -440,6 +561,32 @@ function ShotImage({
     );
   }
 
+  if (isPlaceholderShot(shot)) {
+    return (
+      <div
+        role="img"
+        aria-label={shot.alt}
+        className={[
+          "flex items-center justify-center bg-[color-mix(in_oklab,var(--ink)_12%,var(--canvas))]",
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        style={{
+          aspectRatio: `${shot.width ?? 16} / ${shot.height ?? 10}`,
+        }}
+        onPointerDown={rest.onPointerDown}
+        onPointerMove={rest.onPointerMove}
+        onPointerUp={rest.onPointerUp}
+        onPointerCancel={rest.onPointerCancel}
+      >
+        <span className="text-sm font-light tracking-[0.18em] text-[color-mix(in_oklab,var(--ink)_45%,transparent)]">
+          Coming Soon
+        </span>
+      </div>
+    );
+  }
+
   return (
     <Image
       src={shot.src}
@@ -466,6 +613,9 @@ function ShotFrame({
   phase,
   shots,
   canDrag,
+  guide,
+  notesOpen,
+  onToggleNotes,
   onClose,
   onStep,
   onField,
@@ -479,6 +629,9 @@ function ShotFrame({
   phase: SlidePhase;
   shots: CaseStudyShot[];
   canDrag: boolean;
+  guide?: CaseStudyGuide;
+  notesOpen: boolean;
+  onToggleNotes: () => void;
   onClose: () => void;
   onStep: (delta: number) => void;
   onField: (field: ShotField) => void;
@@ -514,7 +667,12 @@ function ShotFrame({
   const grab = many && canDrag && phase === "idle" && !isVideoShot(shot);
 
   function closeFromField(event: React.MouseEvent<HTMLElement>) {
-    if (event.target === event.currentTarget) onClose();
+    if (event.target !== event.currentTarget) return;
+    if (notesOpen) {
+      onToggleNotes();
+      return;
+    }
+    onClose();
   }
 
   function onHeroPointerDown(event: React.PointerEvent<HTMLImageElement>) {
@@ -584,106 +742,332 @@ function ShotFrame({
       : "";
 
   const preload = many
-    ? [
-        shots[(index + 1) % total],
-        shots[(index - 1 + total) % total],
-      ].filter((item) => !isVideoShot(item))
+      ? [
+          shots[(index + 1) % total],
+          shots[(index - 1 + total) % total],
+        ].filter((item) => !isVideoShot(item) && !isPlaceholderShot(item))
     : [];
 
   return (
     <div
-      className={`shot-dialog-stage relative flex h-full w-full flex-col${
+      className={`shot-dialog-stage relative flex h-full w-full${
         dragging ? " is-dragging" : ""
-      }${many ? " has-many" : ""}`}
+      }${many ? " has-many" : ""}${notesOpen ? " has-notes" : ""}`}
     >
-      <div className="shot-chrome pointer-events-none absolute inset-0 z-10">
-        <div className="pointer-events-auto absolute top-4 right-4 flex items-center gap-3 md:top-6 md:right-6">
-          {shot.caption && (
-            <a
-              href={shot.caption.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${shot.caption.label} (opens in a new tab)`}
-              className="mr-3 inline-flex items-center gap-1 text-[13px] leading-none font-light underline-offset-2 hover:underline"
-              {...linkCues}
-            >
-              {shot.caption.label}
-              <ArrowUpRightIcon className="size-3.5" />
-            </a>
-          )}
-          <p
-            aria-live="polite"
-            className="text-[13px] leading-none tabular-nums"
-          >
-            {index + 1} / {total}
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="shot-dialog-control"
-            {...dismissCues}
-          >
-            <CloseIcon className="size-4" />
-          </button>
+      <div
+        className="shot-stage-main relative flex min-h-0 min-w-0 flex-1 flex-col"
+        onClick={closeFromField}
+      >
+        <div className="shot-chrome pointer-events-none relative z-20 flex shrink-0 justify-end px-4 pt-4 pb-2 md:px-6 md:pt-6">
+          <div className="pointer-events-auto flex items-center gap-10 md:gap-12">
+            <div className="flex items-center gap-3">
+              {shot.caption?.href && (
+                <a
+                  href={shot.caption.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${shot.caption.label} (opens in a new tab)`}
+                  className="mr-3 inline-flex items-center gap-1 text-[13px] leading-none font-light underline-offset-2 hover:underline"
+                  {...linkCues}
+                >
+                  {shot.caption.label}
+                  <ArrowUpRightIcon className="size-3.5" />
+                </a>
+              )}
+              <p
+                aria-live="polite"
+                className="text-[13px] leading-none tabular-nums"
+              >
+                {index + 1} / {total}
+              </p>
+              {many && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onStep(-1)}
+                    aria-label="Previous image"
+                    className="shot-dialog-control"
+                  >
+                    <ChevronIcon className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onStep(1)}
+                    aria-label="Next image"
+                    className="shot-dialog-control"
+                  >
+                    <ChevronIcon className="size-4 -scale-x-100" />
+                  </button>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              {guide && (
+                <button
+                  type="button"
+                  onClick={onToggleNotes}
+                  aria-label={
+                    notesOpen ? "Hide case study notes" : "Show case study notes"
+                  }
+                  aria-expanded={notesOpen}
+                  aria-pressed={notesOpen}
+                  aria-controls="shot-notes"
+                  className="shot-dialog-control group relative"
+                  {...quietCues}
+                >
+                  <SidebarIcon className="size-4" />
+                  <span
+                    aria-hidden
+                    className="bg-ink text-canvas pointer-events-none absolute top-full left-1/2 z-10 mt-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  >
+                    {notesOpen
+                      ? "Turn presentation mode off"
+                      : "Turn presentation mode on"}
+                  </span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="shot-dialog-control"
+                {...dismissCues}
+              >
+                <CloseIcon className="size-4" />
+              </button>
+            </div>
+          </div>
         </div>
-        {many && (
-          <>
-            <button
-              type="button"
-              onClick={() => onStep(-1)}
-              aria-label="Previous image"
-              className="shot-dialog-control pointer-events-auto absolute top-1/2 left-4 -translate-y-1/2 md:left-6"
-            >
-              <ChevronIcon className="size-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onStep(1)}
-              aria-label="Next image"
-              className="shot-dialog-control pointer-events-auto absolute top-1/2 right-4 -translate-y-1/2 md:right-6"
-            >
-              <ChevronIcon className="size-4 -scale-x-100" />
-            </button>
-          </>
-        )}
-      </div>
 
-      <div className="shot-lift relative min-h-0 flex-1 overflow-hidden">
-        {leaving && (
+        <div className="shot-lift relative min-h-0 flex-1 overflow-hidden">
+          {leaving && (
+            <ShotPane
+              key={leaving.index}
+              shot={leaving.shot}
+              trackClass={outgoingTrack}
+              settled={false}
+              holdX={phase === "park" ? dragX : 0}
+              onTransitionEnd={onSlideEnd}
+              onCloseField={closeFromField}
+            />
+          )}
           <ShotPane
-            key={leaving.index}
-            shot={leaving.shot}
-            trackClass={outgoingTrack}
-            settled={false}
-            holdX={phase === "park" ? dragX : 0}
-            onTransitionEnd={onSlideEnd}
+            key={index}
+            shot={shot}
+            scrollerRef={scroller}
+            trackClass={incomingTrack}
+            settled={!sliding}
+            holdX={sliding ? 0 : dragX}
+            dragging={dragging}
             onCloseField={closeFromField}
+            onField={onField}
+            onHeroPointerDown={grab ? onHeroPointerDown : undefined}
+            onHeroPointerMove={grab || dragging ? onHeroPointerMove : undefined}
+            onHeroPointerUp={grab || dragging ? finishHeroPointer : undefined}
           />
+          {preload.map((item, i) => (
+            <ShotImage
+              key={`preload-${item.src}-${i}`}
+              shot={item}
+              className="hidden"
+            />
+          ))}
+        </div>
+      </div>
+      {guide && <ShotNotes guide={guide} index={index} open={notesOpen} />}
+    </div>
+  );
+}
+
+function ShotNotes({
+  guide,
+  index,
+  open,
+}: {
+  guide: CaseStudyGuide;
+  index: number;
+  open: boolean;
+}) {
+  const root = useRef<HTMLElement>(null);
+  const resize = useRef<{
+    id: number;
+    startX: number;
+    startW: number;
+  } | null>(null);
+  const [width, setWidth] = useState<number | null>(null);
+  const [resizing, setResizing] = useState(false);
+  const { jumpTo } = useContext(OpenShot);
+
+  useEffect(() => {
+    if (!open) return;
+    const current = root.current?.querySelector(`[data-shot-note="${index}"]`);
+    if (!(current instanceof HTMLElement)) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    current.scrollIntoView({
+      block: "center",
+      behavior: reduce ? "auto" : "smooth",
+    });
+  }, [index, open]);
+
+  function currentWidth() {
+    return width ?? root.current?.getBoundingClientRect().width ?? NOTES_MIN;
+  }
+
+  function onResizePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const node = root.current;
+    if (!node) return;
+    resize.current = {
+      id: event.pointerId,
+      startX: event.clientX,
+      startW: node.getBoundingClientRect().width,
+    };
+    setResizing(true);
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      /* Synthetic events (and some pens) have no capture. */
+    }
+  }
+
+  function onResizePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    const start = resize.current;
+    if (!start || start.id !== event.pointerId) return;
+    event.preventDefault();
+    setWidth(clampNotesWidth(start.startW + (start.startX - event.clientX)));
+  }
+
+  function onResizePointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    const start = resize.current;
+    if (!start || start.id !== event.pointerId) return;
+    resize.current = null;
+    setResizing(false);
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }
+
+  function onResizeKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    event.stopPropagation();
+    const delta = event.key === "ArrowLeft" ? 16 : -16;
+    setWidth(clampNotesWidth(currentWidth() + delta));
+  }
+
+  return (
+    <aside
+      ref={root}
+      id="shot-notes"
+      className={`shot-notes${open ? " is-open" : ""}${
+        resizing ? " is-resizing" : ""
+      }`}
+      style={
+        width
+          ? ({ "--shot-notes-width": `${width}px` } as React.CSSProperties)
+          : undefined
+      }
+      aria-label="Case study notes"
+      inert={!open}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize notes"
+        aria-valuenow={width ?? undefined}
+        aria-valuemin={NOTES_MIN}
+        tabIndex={open ? 0 : -1}
+        className="shot-notes-handle"
+        onPointerDown={onResizePointerDown}
+        onPointerMove={onResizePointerMove}
+        onPointerUp={onResizePointerUp}
+        onPointerCancel={onResizePointerUp}
+        onKeyDown={onResizeKeyDown}
+      />
+      <div className="shot-notes-inner text-[15px] leading-relaxed">
+        <h2 className="font-display text-[28px] leading-tight font-thin">
+          {guide.title}
+        </h2>
+        <p className="text-lede mt-2 text-[15px] leading-snug font-light">
+          {guide.meta}
+        </p>
+        {guide.tags.length > 0 && (
+          <p className="mt-3 text-xs font-light tracking-wide opacity-70">
+            {guide.tags.join(" · ")}
+          </p>
         )}
-        <ShotPane
-          key={index}
-          shot={shot}
-          scrollerRef={scroller}
-          trackClass={incomingTrack}
-          settled={!sliding}
-          holdX={sliding ? 0 : dragX}
-          dragging={dragging}
-          onCloseField={closeFromField}
-          onField={onField}
-          onHeroPointerDown={grab ? onHeroPointerDown : undefined}
-          onHeroPointerMove={grab || dragging ? onHeroPointerMove : undefined}
-          onHeroPointerUp={grab || dragging ? finishHeroPointer : undefined}
-        />
-        {preload.map((item, i) => (
-          <ShotImage
-            key={`preload-${item.src}-${i}`}
-            shot={item}
-            className="hidden"
+        {guide.blocks.map((block, i) => (
+          <GuideBlockView
+            key={i}
+            block={block}
+            current={index}
+            onJump={jumpTo}
           />
         ))}
       </div>
-    </div>
+    </aside>
+  );
+}
+
+function GuideBlockView({
+  block,
+  current,
+  onJump,
+}: {
+  block: CaseStudyGuideBlock;
+  current: number;
+  onJump: (index: number) => void;
+}) {
+  if (block.kind === "heading") {
+    return (
+      <h3 className="text-accent mt-8 text-base font-medium">{block.text}</h3>
+    );
+  }
+  if (block.kind === "copy") {
+    return (
+      <p className="mt-4 font-light">
+        {block.lead ? (
+          <>
+            <strong className="block font-bold">{block.lead}</strong>
+            {block.rest}
+          </>
+        ) : (
+          block.rest
+        )}
+      </p>
+    );
+  }
+  if (block.kind === "bullets") {
+    return (
+      <ul className="mt-4 list-disc space-y-2 pl-[1.1em] font-light xl:space-y-3">
+        {block.items.map((item) =>
+          typeof item === "string" ? (
+            <li key={item}>{item}</li>
+          ) : (
+            <li key={item.lead}>
+              <strong className="font-bold">{item.lead}</strong> {item.rest}
+            </li>
+          ),
+        )}
+      </ul>
+    );
+  }
+  return (
+    <button
+      type="button"
+      data-shot-note={block.shotIndex}
+      onClick={() => onJump(block.shotIndex)}
+      aria-current={block.shotIndex === current ? "true" : undefined}
+      className={`shot-note-caption mt-4 font-light${
+        block.shotIndex === current ? " is-current" : ""
+      }`}
+    >
+      <ImageIcon className="size-3" />
+      {block.text}
+    </button>
   );
 }
 
@@ -741,12 +1125,24 @@ function ShotPane({
           }}
         >
           <div
-            className="flex w-full items-center justify-center px-16 py-12 md:px-24"
+            className="shot-slide-frame flex w-full items-center justify-center px-16 md:px-24"
             onClick={onCloseField}
           >
             <ShotImage
               shot={shot}
-              className="shot-hero h-auto w-full max-w-[1636px]"
+              className={
+                shot.maxHeight
+                  ? "shot-hero h-auto w-full max-w-[1636px] object-cover"
+                  : "shot-hero h-auto w-full max-w-[1636px]"
+              }
+              style={
+                shot.maxHeight
+                  ? {
+                      maxHeight: shot.maxHeight,
+                      objectPosition: shot.objectPosition ?? "center",
+                    }
+                  : undefined
+              }
               onPointerDown={onHeroPointerDown}
               onPointerMove={onHeroPointerMove}
               onPointerUp={onHeroPointerUp}

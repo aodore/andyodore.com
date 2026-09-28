@@ -38,6 +38,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
     redirect(caseStudyHref(unlockSlug));
   }
 
+  if (typeof unlock === "string" && unlockSlug && unlock !== unlockSlug) {
+    redirect(`/?unlock=${unlockSlug}`);
+  }
+
   const tallyCounts = await getTallyCounts();
 
   return (
@@ -87,7 +91,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                   <p>
                     Currently at{" "}
                     <strong className="font-semibold">Atlassian</strong>, I&rsquo;m
-                    setting design direction on Strategy Collection, an AI-native
+                    setting design direction on Strategic Intelligence, an AI-native
                     system that sharpens how leaders make decisions. Before that,
                     at <strong className="font-semibold">Instacart</strong>, I grew
                     a marketing platform from a four-retailer pilot to $192M in
@@ -106,7 +110,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                 <hr className="t-stagger-line border-rule my-10 xl:my-16" />
 
                 <AboutRow label="The perspective">
-                  <ul className="list-disc pl-[1.1em]">
+                  <ul className="list-disc space-y-2 pl-[1.1em] xl:space-y-3">
                     {perspective.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
