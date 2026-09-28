@@ -302,7 +302,7 @@ export function ShotLightbox({
         }
         onCancel={(event) => {
           event.preventDefault();
-          if (notesOpen) {
+          if (notesOpen && window.matchMedia("(min-width: 768px)").matches) {
             setNotesOpen(false);
             return;
           }
@@ -310,7 +310,7 @@ export function ShotLightbox({
         }}
         onClick={(event) => {
           if (event.target !== dialog.current) return;
-          if (notesOpen) {
+          if (notesOpen && window.matchMedia("(min-width: 768px)").matches) {
             setNotesOpen(false);
             return;
           }
@@ -325,7 +325,7 @@ export function ShotLightbox({
             step(-1);
           } else if (event.key === "Escape") {
             event.preventDefault();
-            if (notesOpen) {
+            if (notesOpen && window.matchMedia("(min-width: 768px)").matches) {
               setNotesOpen(false);
               return;
             }
@@ -382,7 +382,7 @@ export function PresentationLaunch() {
       type="button"
       onClick={open}
       aria-label="Open presentation"
-      className="bg-accent text-ink group relative grid size-11 cursor-pointer place-items-center rounded-full motion-safe:transition-transform motion-safe:duration-300 xl:size-14"
+      className="bg-accent text-ink group relative hidden size-11 cursor-pointer place-items-center rounded-full motion-safe:transition-transform motion-safe:duration-300 md:grid xl:size-14"
       {...quietCues}
     >
       <PresentationIcon className="size-4 xl:size-6" />
@@ -812,7 +812,7 @@ function ShotFrame({
                   aria-expanded={notesOpen}
                   aria-pressed={notesOpen}
                   aria-controls="shot-notes"
-                  className="shot-dialog-control group relative"
+                  className="shot-dialog-control shot-notes-toggle group relative"
                   {...quietCues}
                 >
                   <SidebarIcon className="size-4" />

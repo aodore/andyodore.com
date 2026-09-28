@@ -778,38 +778,9 @@ html:has([data-case-study="campaign-manager"]) {
   }
 
   @media (max-width: 767px) {
-    .shot-notes {
-      position: absolute;
-      inset: 0 0 0 auto;
-      z-index: 15;
-      width: 0;
-      --shot-notes-width: min(22.5rem, 86vw);
-      transform: translateX(100%);
-      transition:
-        width 320ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .shot-notes.is-open {
-      width: var(--shot-notes-width);
-      transform: none;
-    }
-
-    .shot-dialog-stage.has-notes .shot-chrome {
-      padding-right: calc(var(--shot-notes-width) + 1rem);
-    }
-
-    .shot-dialog-stage.has-notes .shot-lift::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 12;
-      background: color-mix(
-        in oklab,
-        var(--shot-field, var(--canvas)) 48%,
-        transparent
-      );
-      pointer-events: none;
+    .shot-notes,
+    .shot-notes-toggle {
+      display: none;
     }
   }
 

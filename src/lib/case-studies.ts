@@ -39,13 +39,13 @@ export type CaseStudyParagraph =
 
 export type CaseStudySection = {
   label?: string;
-  body?: string | CaseStudyParagraph[];
+  body?: CaseStudyParagraph | CaseStudyParagraph[];
   /** Spec-sheet lines, used when a section is a brief rather than a paragraph. */
   facts?: CaseStudyFact[];
   /** Bullet list. Can sit on its own or under body. */
   list?: CaseStudyParagraph[];
   /** Copy that follows the list in the same section. */
-  after?: string | CaseStudyParagraph[];
+  after?: CaseStudyParagraph | CaseStudyParagraph[];
   /** A second bullet list, after `after`. */
   afterList?: CaseStudyParagraph[];
   /** Sit the copy between the hero still and the hero clip. Shots stay after. */
