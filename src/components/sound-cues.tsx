@@ -10,7 +10,7 @@ import { useEffect } from "react";
  */
 export function SoundCues() {
   useEffect(() => {
-    setVolume(0.5);
+    setVolume(0.1);
     bind();
   }, []);
 
