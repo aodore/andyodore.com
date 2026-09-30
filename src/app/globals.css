@@ -1257,6 +1257,10 @@ body:has(dialog[open]) .back-to-top {
   pointer-events: none;
 }
 
+body:has([data-talk-window]) .back-to-top {
+  display: none;
+}
+
 /* The gate, while it is up. `visibility` is everything a covered page needs:
    nothing painted, nothing tabbable, nothing announced, and the layout still
    settled so there is no shift when it comes back. The entry adds

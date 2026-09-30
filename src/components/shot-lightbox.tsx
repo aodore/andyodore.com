@@ -11,8 +11,9 @@ import {
   useState,
   type ComponentProps,
 } from "react";
-import { ArrowUpRightIcon, CloseIcon, ImageIcon, PresentationIcon, SidebarIcon } from "@/components/brand";
+import { ArrowUpRightIcon, CloseIcon, ImageIcon, PresentationIcon, SidebarIcon, TalkIcon } from "@/components/brand";
 import type { CaseStudyGuide, CaseStudyGuideBlock, CaseStudyShot } from "@/lib/case-studies";
+import { TALK_CHANNEL, readTalkMessage } from "@/lib/talk-sync";
 const OpenShot = createContext<{
   openAt: (index: number, origin?: OpenOrigin) => void;
   jumpTo: (index: number) => void;
@@ -95,10 +96,12 @@ function flipFromOrigin(img: HTMLElement, from: OpenOrigin) {
 export function ShotLightbox({
   shots,
   guide,
+  talkSlug,
   children,
 }: {
   shots: CaseStudyShot[];
   guide?: CaseStudyGuide;
+  talkSlug?: string;
   children: React.ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -110,6 +113,20 @@ export function ShotLightbox({
   const [presence, setPresence] = useState<Presence>("closed");
   const [notesOpen, setNotesOpen] = useState(true);
   const origin = useRef<OpenOrigin | null>(null);
+  const talkSession = useRef<string | null>(null);
+  const talkPopup = useRef<Window | null>(null);
+  const talkChannel = useRef<BroadcastChannel | null>(null);
+  const stepRef = useRef<(delta: number) => void>(() => {});
+  const galleryRef = useRef({
+    index: null as number | null,
+    open: false,
+    total: shots.length,
+  });
+  galleryRef.current = {
+    index,
+    open: index !== null && presence === "open",
+    total: shots.length,
+  };
   const [flip, setFlip] = useState({
     flip: "translate3d(0, 30vh, 0)",
     radius: "1.5rem",
@@ -217,6 +234,41 @@ export function ShotLightbox({
     }
   }, [presence, finishClose]);
 
+  const postTalkState = useCallback(() => {
+    const channel = talkChannel.current;
+    const session = talkSession.current;
+    if (!channel || !session || !talkSlug) return;
+    const gallery = galleryRef.current;
+    channel.postMessage({
+      type: "state",
+      session,
+      slug: talkSlug,
+      index: gallery.index ?? 0,
+      total: gallery.total,
+      open: gallery.open,
+    });
+  }, [talkSlug]);
+
+  useEffect(() => {
+    if (!talkSlug) return;
+    const channel = new BroadcastChannel(TALK_CHANNEL);
+    talkChannel.current = channel;
+    channel.onmessage = (event) => {
+      const msg = readTalkMessage(event.data);
+      if (!msg || msg.slug !== talkSlug || msg.session !== talkSession.current) return;
+      if (msg.type === "hello") postTalkState();
+      if (msg.type === "step") stepRef.current(msg.delta);
+    };
+    return () => {
+      channel.close();
+      if (talkChannel.current === channel) talkChannel.current = null;
+    };
+  }, [talkSlug, postTalkState]);
+
+  useEffect(() => {
+    postTalkState();
+  }, [postTalkState, index, presence, shots.length]);
+
   useLayoutEffect(() => {
     if (phase !== "park") return;
     let inner = 0;
@@ -245,6 +297,7 @@ export function ShotLightbox({
     }
     setIndex((index + delta + shots.length) % shots.length);
   }
+  stepRef.current = step;
 
   function jumpTo(next: number) {
     if (
@@ -270,6 +323,30 @@ export function ShotLightbox({
       return;
     }
     pendingField.current = next;
+  }
+
+  function openTalkWindow() {
+    if (!talkSlug) return;
+    const open = talkPopup.current;
+    if (open && !open.closed) {
+      open.focus();
+      postTalkState();
+      return;
+    }
+    const session = talkSession.current ?? crypto.randomUUID();
+    talkSession.current = session;
+    const width = 560;
+    const height = Math.min(960, window.screen.availHeight - 48);
+    const left = window.screenX + window.outerWidth + 12;
+    const top = window.screenY + 24;
+    const popup = window.open(
+      `/work/${talkSlug}/talk?session=${encodeURIComponent(session)}`,
+      `talk-${talkSlug}`,
+      `popup=yes,width=${width},height=${height},left=${Math.round(left)},top=${Math.round(top)}`,
+    );
+    talkPopup.current = popup;
+    popup?.focus();
+    postTalkState();
   }
 
   return (
@@ -348,6 +425,7 @@ export function ShotLightbox({
             onStep={step}
             onField={applyField}
             onSlideEnd={endSlide}
+            onOpenTalk={talkSlug ? openTalkWindow : undefined}
           />
         )}
       </dialog>
@@ -616,6 +694,7 @@ function ShotFrame({
   onStep,
   onField,
   onSlideEnd,
+  onOpenTalk,
 }: {
   shot: CaseStudyShot;
   index: number;
@@ -632,6 +711,7 @@ function ShotFrame({
   onStep: (delta: number) => void;
   onField: (field: ShotField) => void;
   onSlideEnd: () => void;
+  onOpenTalk?: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
   const pointer = useRef<{
@@ -867,7 +947,14 @@ function ShotFrame({
           ))}
         </div>
       </div>
-      {guide && <ShotNotes guide={guide} index={index} open={notesOpen} />}
+      {guide && (
+        <ShotNotes
+          guide={guide}
+          index={index}
+          open={notesOpen}
+          onOpenTalk={onOpenTalk}
+        />
+      )}
     </div>
   );
 }
@@ -876,10 +963,12 @@ function ShotNotes({
   guide,
   index,
   open,
+  onOpenTalk,
 }: {
   guide: CaseStudyGuide;
   index: number;
   open: boolean;
+  onOpenTalk?: () => void;
 }) {
   const root = useRef<HTMLElement>(null);
   const resize = useRef<{
@@ -981,9 +1070,27 @@ function ShotNotes({
         onKeyDown={onResizeKeyDown}
       />
       <div className="shot-notes-inner text-[15px] leading-relaxed">
-        <h2 className="font-display text-[28px] leading-tight font-thin">
-          {guide.title}
-        </h2>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="min-w-0 font-display text-[28px] leading-tight font-thin">
+            {guide.title}
+          </h2>
+          {onOpenTalk && (
+            <button
+              type="button"
+              onClick={onOpenTalk}
+              aria-label="Open talk track"
+              className="text-ink hover:text-accent group relative mt-1.5 grid size-7 shrink-0 cursor-pointer place-items-center rounded-full"
+            >
+              <TalkIcon className="size-4" />
+              <span
+                aria-hidden
+                className="bg-ink text-canvas pointer-events-none absolute top-full right-0 z-10 mt-2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+              >
+                Talk track
+              </span>
+            </button>
+          )}
+        </div>
         <p className="text-lede mt-2 text-[15px] leading-snug font-light">
           {guide.meta}
         </p>

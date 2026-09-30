@@ -179,6 +179,24 @@ export function PresentationIcon(props: SvgProps) {
   );
 }
 
+export function TalkIcon(props: SvgProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <path d="M2.75 3.25h10.5a1 1 0 0 1 1 1v5.5a1 1 0 0 1-1 1H8.1L5.4 13.25V10.75H2.75a1 1 0 0 1-1-1V4.25a1 1 0 0 1 1-1z" />
+      <path d="M5 6.15h6M5 8.15h3.5" />
+    </svg>
+  );
+}
+
 export function ImageIcon(props: SvgProps) {
   return (
     <svg

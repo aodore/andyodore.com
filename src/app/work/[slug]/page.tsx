@@ -19,6 +19,7 @@ import {
   type CaseStudySection,
   type CaseStudyParagraph,
 } from "@/lib/case-studies";
+import { hasTalkTrack } from "@/lib/talk-track";
 
 export function generateStaticParams() {
   return caseStudies.map(({ slug }) => ({ slug }));
@@ -73,6 +74,7 @@ export default async function CaseStudyPage({
             <ShotLightbox
               shots={caseStudyShots(study)}
               guide={caseStudyGuide(study)}
+              talkSlug={hasTalkTrack(study.slug) ? study.slug : undefined}
             >
               <div className="t-stagger-line mt-10 flex items-center justify-between gap-6 xl:mt-16">
                 <h1 className="text-ink font-display text-display min-w-0 font-thin text-balance">
