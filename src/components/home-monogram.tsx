@@ -8,7 +8,6 @@ import {
   leaveHome,
   reopenEntry,
 } from "@/lib/accent";
-import { linkCues } from "@/lib/sound";
 
 /** Same spring the intro seats use on the way in: under-damped, so the
     header mark lands with a small overshoot instead of creeping in. */
@@ -184,7 +183,6 @@ export function HomeMonogram() {
       href="/"
       aria-label="Home"
       className="home-monogram relative"
-      {...linkCues}
     >
       <Monogram className="size-12 xl:size-16" />
     </Link>

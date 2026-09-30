@@ -9,7 +9,6 @@ import {
   Monogram,
 } from "@/components/brand";
 import type { CaseStudy } from "@/lib/case-studies";
-import { dismissCues, helloCues, quietCues } from "@/lib/sound";
 import { unlockWork } from "@/lib/unlock-work";
 
 export function PasswordModal({
@@ -130,7 +129,6 @@ function PasswordForm({
           disabled={pending}
           aria-label="Close"
           className="text-ink hover:bg-ink/8 grid size-8 cursor-pointer place-items-center rounded-full transition-colors disabled:opacity-70"
-          {...dismissCues}
         >
           <CloseIcon className="size-4" />
         </button>
@@ -185,7 +183,6 @@ function PasswordForm({
           aria-label={revealed ? "Hide password" : "Show password"}
           aria-pressed={revealed}
           className="text-ink hover:bg-ink/8 group absolute top-1/2 right-1.5 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-full transition-colors"
-          {...quietCues}
         >
           {revealed ? (
             <EyeIcon className="size-4" />
@@ -215,7 +212,6 @@ function PasswordForm({
         type="submit"
         disabled={pending}
         className="bg-ink text-canvas hover:bg-ink/85 mt-8 flex h-12 w-fit cursor-pointer items-center gap-2 rounded-full px-5 font-medium transition-colors disabled:cursor-wait disabled:opacity-70"
-        {...helloCues}
       >
         <span className="translate-y-[1px]">
           {pending ? "Opening…" : `Open ${study.title}`}

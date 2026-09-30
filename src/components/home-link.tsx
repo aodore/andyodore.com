@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Monogram } from "@/components/brand";
-import { linkCues } from "@/lib/sound";
 
 /** The monogram on case-study pages. Same mark as the home header, but this
     one is a link, so it gets a tooltip the decorative one does not need. */
@@ -10,7 +9,6 @@ export function HomeLink({ className }: { className?: string }) {
       href="/"
       aria-label="Go home"
       className={`group relative ${className ?? ""}`}
-      {...linkCues}
     >
       <Monogram className="size-12 xl:size-16" />
       <span

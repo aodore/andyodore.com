@@ -1,7 +1,6 @@
 "use client";
 
 import { MoonIcon, SunIcon } from "@/components/brand";
-import { quietCues } from "@/lib/sound";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 
 function activeTheme() {
@@ -31,7 +30,6 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       className="text-ink hover:bg-ink/8 group relative grid size-8 cursor-pointer place-items-center rounded-full transition-colors"
-      {...quietCues}
     >
       <SunIcon className="theme-face-sun size-4" />
       <MoonIcon className="theme-face-moon text-muted size-4" />

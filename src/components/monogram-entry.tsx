@@ -1,6 +1,6 @@
 "use client";
 
-import { play } from "cuelume";
+import { play, setVolume } from "cuelume";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Monogram } from "@/components/brand";
 import {
@@ -494,6 +494,7 @@ export function MonogramEntry() {
       setGrabbed(-1);
       setArmed(false);
       advance("posting");
+      setVolume(0.1);
       play("success");
 
       try {
@@ -589,7 +590,6 @@ export function MonogramEntry() {
     state.armed = false;
     setArmed(false);
     settleHover(event.clientX, event.clientY);
-    play("whisper");
   }
 
   /** A cancelled press — a gesture the browser took over, or a window that
@@ -666,7 +666,6 @@ export function MonogramEntry() {
               onClick={(event) => {
                 if (event.detail === 0) post(i);
               }}
-              data-cuelume-hover="press"
             >
               <span className="entry-mark">
                 <Monogram />

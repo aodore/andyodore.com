@@ -7,7 +7,6 @@ import {
   type CaseStudy,
   type CaseStudySlug,
 } from "@/lib/case-studies";
-import { navCues } from "@/lib/sound";
 
 type Direction = "previous" | "next";
 
@@ -83,7 +82,6 @@ function NavCard({
     <Link
       href={caseStudyHref(study.slug)}
       className="t-stagger-line group block rounded-[99px]"
-      {...navCues}
     >
       {/* Resting colors come from .project-nav (this page, dark). The palette
           class only rebinds on hover, to the destination's designed canvas.

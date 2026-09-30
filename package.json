@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@upstash/redis": "^1.38.4",
-    "cuelume": "^0.2.2",
+    "cuelume": "^0.2.4",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"

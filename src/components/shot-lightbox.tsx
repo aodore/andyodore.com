@@ -13,8 +13,6 @@ import {
 } from "react";
 import { ArrowUpRightIcon, CloseIcon, ImageIcon, PresentationIcon, SidebarIcon } from "@/components/brand";
 import type { CaseStudyGuide, CaseStudyGuideBlock, CaseStudyShot } from "@/lib/case-studies";
-import { dismissCues, linkCues, quietCues } from "@/lib/sound";
-
 const OpenShot = createContext<{
   openAt: (index: number, origin?: OpenOrigin) => void;
   jumpTo: (index: number) => void;
@@ -383,7 +381,6 @@ export function PresentationLaunch() {
       onClick={open}
       aria-label="Open presentation"
       className="bg-accent text-ink group relative hidden size-11 cursor-pointer place-items-center rounded-full motion-safe:transition-transform motion-safe:duration-300 md:grid xl:size-14"
-      {...quietCues}
     >
       <PresentationIcon className="size-4 xl:size-6" />
       <span
@@ -517,7 +514,6 @@ function ShotCaption({ shot }: { shot: CaseStudyShot }) {
           rel="noopener noreferrer"
           aria-label={`${label} (opens in a new tab)`}
           className="inline-flex items-center gap-1 text-sm font-light transition-colors hover:text-ink"
-          {...linkCues}
         >
           {label}
           <ArrowUpRightIcon className="size-3.5" />
@@ -768,7 +764,6 @@ function ShotFrame({
                   rel="noopener noreferrer"
                   aria-label={`${shot.caption.label} (opens in a new tab)`}
                   className="mr-3 inline-flex items-center gap-1 text-[13px] leading-none font-light underline-offset-2 hover:underline"
-                  {...linkCues}
                 >
                   {shot.caption.label}
                   <ArrowUpRightIcon className="size-3.5" />
@@ -813,7 +808,6 @@ function ShotFrame({
                   aria-pressed={notesOpen}
                   aria-controls="shot-notes"
                   className="shot-dialog-control shot-notes-toggle group relative"
-                  {...quietCues}
                 >
                   <SidebarIcon className="size-4" />
                   <span
@@ -831,7 +825,6 @@ function ShotFrame({
                 onClick={onClose}
                 aria-label="Close"
                 className="shot-dialog-control"
-                {...dismissCues}
               >
                 <CloseIcon className="size-4" />
               </button>

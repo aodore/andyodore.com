@@ -5,7 +5,6 @@ import {
   getCaseStudy,
   type CaseStudySlug,
 } from "@/lib/case-studies";
-import { navCues } from "@/lib/sound";
 
 /** Left/right arrows on the case-study title, cycling the same order as the
     cards at the bottom of the page. */
@@ -59,7 +58,6 @@ function CycleLink({
           ? "motion-safe:hover:-translate-x-1"
           : "motion-safe:hover:translate-x-1"
       }`}
-      {...navCues}
     >
       <ArrowIcon
         className={`size-4 xl:size-6 ${isPrevious ? "-scale-x-100" : ""}`}

@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { BackToTop } from "@/components/back-to-top";
-import { SoundCues } from "@/components/sound-cues";
 import { accentScript } from "@/lib/accent";
 import { personJsonLd, siteDescription, siteName, siteUrl } from "@/lib/site";
 import { themeScript } from "@/lib/theme";
@@ -81,7 +80,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         {children}
         <BackToTop />
-        <SoundCues />
       </body>
     </html>
   );

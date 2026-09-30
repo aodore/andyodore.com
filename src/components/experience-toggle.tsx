@@ -1,7 +1,6 @@
 "use client";
 
 import { changeExperience } from "@/lib/accent";
-import { quietCues } from "@/lib/sound";
 
 /** Header control that sends the visitor back to the entry to pick again.
     Same 32px hit target as the theme toggle; the 16px disc is the monogram
@@ -12,7 +11,6 @@ export function ExperienceToggle() {
       type="button"
       onClick={changeExperience}
       className="hover:bg-ink/8 group relative grid size-8 cursor-pointer place-items-center rounded-full transition-colors"
-      {...quietCues}
     >
       <span
         aria-hidden

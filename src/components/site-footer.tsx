@@ -1,5 +1,4 @@
 import { InstagramIcon, LinkedinIcon, MailIcon } from "@/components/brand";
-import { linkCues, quietCues } from "@/lib/sound";
 
 const socials = [
   { label: "Instagram", href: "https://instagram.com/andyodore", icon: InstagramIcon },
@@ -22,7 +21,6 @@ export function SiteFooter() {
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-accent underline-offset-[3px] transition-colors hover:underline"
-          {...linkCues}
         >
           Go birds
         </a>
@@ -35,7 +33,6 @@ export function SiteFooter() {
               href={href}
               aria-label={label}
               className="hover:text-accent block transition-colors"
-              {...quietCues}
             >
               <Icon className="size-4" />
             </a>
