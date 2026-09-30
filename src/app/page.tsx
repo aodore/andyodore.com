@@ -20,7 +20,7 @@ import { getTallyCounts } from "@/lib/tally-store";
 import { hasWorkAccess } from "@/lib/work-session";
 
 const perspective = [
-  "I run my work like it\u2019s my own business.",
+  "I take high accountability and crave autonomy.",
   "I go find the problem. I don\u2019t wait for the brief.",
   "I\u2019ve worked at every stage, pre-PMF to post-IPO. Same craft either way.",
   "I build foundations. The good ones outlive the thing they were built for.",

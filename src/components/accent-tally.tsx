@@ -54,8 +54,7 @@ export function AccentTally({
   return (
     <AboutRow label="The tally">
       <p>
-        I knew you were curious, here&rsquo;s the experience tally.
-        {lead ? ` ${lead}` : ""}{" "}
+        {lead ? `${lead} ` : null}
         <a
           href="#change-experience"
           className="cursor-pointer font-semibold hover:text-accent"
