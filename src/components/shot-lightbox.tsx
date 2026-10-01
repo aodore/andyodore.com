@@ -327,6 +327,7 @@ export function ShotLightbox({
 
   function openTalkWindow() {
     if (!talkSlug) return;
+    setNotesOpen(false);
     const open = talkPopup.current;
     if (open && !open.closed) {
       open.focus();
