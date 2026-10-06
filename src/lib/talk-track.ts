@@ -141,8 +141,141 @@ const campaignManager: TalkCue[] = [
   },
 ];
 
+const postOffice: TalkCue[] = [
+  {
+    src: "/images/post-office-desk.webp",
+    title: "A spotlight on Atlassian Home",
+    onScreen: "a laptop showing Atlassian Home, with a spotlight welcoming you in.",
+    paragraphs: [
+      "This one is from my time at Atlassian, on a team called Post Office. Post Office is the platform that orchestrates messaging across Atlassian's products, so in-product messages, email, push, and chat. I was the lead product designer from May to September 2025, working with three designers, a content designer, a PM, about 20 engineers, and five partners on the Atlassian Design System team.",
+      "This is where we ended up, with a quiet, friendly spotlight welcoming someone to Atlassian Home. It's a small moment, but getting there took a system that 16 teams across Atlassian now use.",
+    ],
+  },
+  {
+    src: "/images/post-office-noise.webp",
+    title: "The purple-box pile-up",
+    onScreen: "a Confluence page crowded with overlapping purple boxes, flags, and spotlights.",
+    paragraphs: [
+      "This is where we started. Every team at Atlassian built its own messages, and nobody coordinated them, so a single Confluence page could end up looking like this. Customers got popovers from different teams fighting for the same screen, and so many messages that they opted out and stopped trusting them. Product teams, meanwhile, kept rebuilding the same patterns from scratch.",
+      "The hard part was that no single team owned messaging end to end. Any fix had to work across dozens of product teams without slowing down their roadmaps.",
+    ],
+  },
+  {
+    src: "/images/post-office-courier.webp",
+    title: "Courier's principles and intensity levels",
+    onScreen:
+      "Courier's messaging principles, four intensity levels from subtle to notable, and the guidance pages in Confluence.",
+    paragraphs: [
+      "I decided to go after the system that produces messages, because without shared rules for when, where, and how loudly to message, every fix would fragment the same way.",
+      "I started by auditing messages across Atlassian, then ran a workshop with designers from across the company. Out of that came our messaging guidelines, built on four principles. Target precisely, so only people who can act on a message see it. Don't derail users, so routine messages stay quiet and loud patterns are saved for moments that matter. Give users control, with clear dismissal, snooze, and a \"why am I seeing this\" explanation. And work together, by routing everything through Post Office so teams don't collide.",
+      "The intensity levels you see here come from our Level of Attention framework. A team stops asking which component to use and starts asking how much attention a message deserves. A second framework mapped each goal, like onboarding or upsell, to approved components. Research showed upsells land better out of flow, for example, so those go to side-nav banners or email instead of interrupting someone's work.",
+    ],
+  },
+  {
+    src: "/images/post-office-spotlight.webp",
+    title: "Experiment: comment replies from a flag",
+    onScreen:
+      "a Confluence page with an inline comment prompt and a notifications panel of comments and requests.",
+    paragraphs: [
+      "While I was writing those guidelines, I was also running growth experiments in Confluence with my cross-functional team. The whole org had one goal, which was to grow monthly active users.",
+      "This was one of them. If someone lingered on a page for a while, we surfaced a comment on one of their docs. They could read it in context, then reply inline or from the notification. It moved MAU, but only a little.",
+    ],
+  },
+  {
+    src: "/images/post-office-flags.webp",
+    title: "Experiment: flag replies, reacts, and next best actions",
+    onScreen:
+      "a set of in-product messages, including comments, reactions, published-page flags, replies, and a first-project tour.",
+    paragraphs: [
+      "We kept going. Here are a few more we tried: replying to a comment straight from a flag, reacting from a flag, and nudging people toward a next best action at key moments, like after they publish a page.",
+    ],
+  },
+  {
+    src: "/images/post-office-channels.webp",
+    title: "Experiment: side panel banners, media flags, and email",
+    onScreen:
+      "the same messaging system across channels, with in-product flags, a Confluence page, and an email digest.",
+    paragraphs: [
+      "And we took it beyond the product, into side panel banners, flags with media, and an email digest of what your team is reading.",
+      "This is where it got uncomfortable. We were under pressure to grow MAU, and at the same time I was writing rules meant to push back on exactly these tactics. If my team was chasing MAU this hard, every other growth team at Atlassian was too.",
+      "Running these experiments ourselves showed me what growth teams were up against, and the guidelines got much stronger for it, because we wrote them as a team chasing the same number as everyone else. Jira and Confluence became our closest partners. They now check every experiment against the guidelines before it ships, and adoption grew to 16 teams across Atlassian.",
+    ],
+  },
+  {
+    src: "/images/post-office-attention.webp",
+    title: "Level of attention on a real overlay",
+    onScreen:
+      "a Jira Product Discovery overlay labeled with its level of attention: notable, overlay with a blanket, major brand moment, rare frequency.",
+    paragraphs: [
+      "Here's the framework applied to a real message. This is a Jira Product Discovery overlay, one of the loudest things we can put in front of someone. It's a notable level of attention, it's an overlay that dims the page behind it, it's reserved for a major brand moment, and it should be rare. Every message gets that same check, so a team has to justify the volume before they turn it up.",
+    ],
+  },
+  {
+    src: "/images/post-office-moments.webp",
+    title: "Modals as a system",
+    onScreen:
+      "a grid of branded moment overlays across Confluence, Teams, Jira Product Discovery, and Jira Service Management.",
+    paragraphs: [
+      "Courier turned the guidelines into components teams could pick up directly. It's the Post Office pattern library, and every pattern in it is built on the Atlassian Design System. It covers popovers like modals, spotlights, flags, and Rovo nudges, plus embedded patterns like side-nav banners and onboarding modules.",
+      "This grid shows modals treated as one system across four products. They share structure and behavior, and each one still carries its product's brand. Fatigue controls are built into all of them, with cooldowns, frequency caps, and expiration rules, so people stop seeing messages they've already dismissed or that have gone stale.",
+    ],
+  },
+  {
+    src: "/images/post-office-onboarding.webp",
+    title: "The purple box vs. Spotlight",
+    onScreen:
+      "Confluence Home with the old purple Welcome box, next to Atlassian Home with Spotlight's dark Welcome Home tooltip.",
+    paragraphs: [
+      "Of everything in Courier, Spotlight needed the most work, so we fast-tracked it. On the left is what we started with. Internally we called it the purple box. It had been Atlassian's onboarding spotlight for more than ten years, across more than 1,100 usages in hundreds of variants. It blocked people until they clicked through or dismissed it, and three in four users dismissed it. It broke almost every principle we had just written.",
+      "On the right is the new Spotlight on Home. It's smaller, it points at one thing, and it doesn't stop you from working.",
+    ],
+  },
+  {
+    src: "/images/post-office-home.mp4",
+    title: "Spotlight in motion",
+    onScreen:
+      "a film of Atlassian Home, with a Connect your work banner, Getting started cards, and Frequently visited.",
+    paragraphs: [
+      "Here it is in motion. The spotlight appears, points at what's new, and gets out of the way when you move on. Getting it here took three big decisions.",
+    ],
+  },
+  {
+    src: "/images/post-office-across-apps.webp",
+    title: "Spotlight across apps and collections",
+    onScreen:
+      "Spotlight across Home, Teamwork, Focus, Bitbucket, Jira Service Management, and Discovery.",
+    paragraphs: [
+      "The first decision was how to migrate. Hundreds of variants meant we couldn't swap everything at once without breaking things nobody fully understood. So we audited every instance with engineering first, then moved teams over in waves. My engineering partner built AI-assisted tooling that sped up the audit and handled 20 to 30 percent of migrations without contacting the owning teams. An EngHealth campaign drove 70 percent completion by the deadline.",
+      "The result is one Spotlight that stays consistent across apps and collections, from Home to Bitbucket to Jira Service Management.",
+    ],
+  },
+  {
+    src: "/images/post-office-figma.webp",
+    title: "The Spotlight Figma kit",
+    onScreen:
+      "the Spotlight Figma kit, with light and dark examples, variants by caret position, and code parts.",
+    paragraphs: [
+      "The second decision was who should own it. Design could drive adoption, but a change this wide needed platform engineering behind it. So Jenny Lou and I embedded with the Atlassian Design System team for a sprint, and we agreed on a clear split up front. ADS would own the component long term, and Post Office would bring the design, the guidelines, and the adoption push. It meant waiting on their bandwidth, so it missed Team '25.",
+      "ADS ships this kit to designers. It has ready-made examples in light and dark, variants for each caret position, and the code parts engineers build with. The parts are composable, and focus management, dialog semantics, and keyboard dismissal are built into the foundation.",
+    ],
+  },
+  {
+    src: "/images/post-office-usage.webp",
+    title: "Spotlight usage guidance",
+    onScreen:
+      "the ADS Spotlight usage page, with guidance for a single-step spotlight on a Jira board.",
+    paragraphs: [
+      "The third decision was the hardest. The old spotlight converted well, but only because it trapped people. We removed that blocking layer, knowing the numbers would drop, and they did. Dismissals went up once people could scroll past.",
+      "We wrote those rules into this usage page. We stayed flexible on form and firm on behavior. When Trello wanted a different button color, we said yes. When they wanted to block dismissal again, we pushed back. Rolling research showed users were seeing fewer, better-targeted spotlights, and customer sentiment went up.",
+      "In the end, 16 teams adopted the guidelines and pattern library. Spotlight reached 100 percent adoption across more than 1,100 usages, and ADS owns it now. Experiments run on the system drove a statistically significant 1.16 percent lift in 28-day MAU, about 15,900 additional users a year.",
+      "If I did it again, I'd bring qualitative research in from the start. We led with quantitative data, and when dismissals rose, the numbers looked worse even though users' needs were being met. We only measured sentiment later. Running both from day one would have let the team see the whole trade-off as it happened.",
+    ],
+  },
+];
+
 const tracks: Record<string, TalkCue[]> = {
   "campaign-manager": campaignManager,
+  "post-office": postOffice,
 };
 
 export function hasTalkTrack(slug: string) {
