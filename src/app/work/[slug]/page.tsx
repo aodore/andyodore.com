@@ -123,7 +123,7 @@ export default async function CaseStudyPage({
                       )}
                       {study.sections.map((section, sectionIndex) => (
                         <Fragment key={`${section.label}-${sectionIndex}`}>
-                          {!section.beforeClip && (
+                          {!section.beforeClip && sectionHasCopy(section) && (
                             <SectionCopy section={section} />
                           )}
                           {section.images?.map((item) => {
@@ -209,6 +209,18 @@ function copyBlocks(paragraphs: CaseStudyParagraph[]) {
   );
 }
 
+function sectionHasCopy(section: CaseStudySection) {
+  return Boolean(
+    section.label ||
+      section.body ||
+      section.facts ||
+      section.list ||
+      section.after ||
+      section.afterList ||
+      section.cards,
+  );
+}
+
 function SectionCopy({ section }: { section: CaseStudySection }) {
   const paragraphs = Array.isArray(section.body)
     ? section.body
@@ -231,6 +243,24 @@ function SectionCopy({ section }: { section: CaseStudySection }) {
             </li>
           ))}
         </ul>
+      ) : section.cards ? (
+        <div className="grid grid-cols-1 gap-3 text-[15px] leading-snug sm:grid-cols-2">
+          {section.cards.map((card) => (
+            <article
+              key={card.title}
+              className="rounded-2xl bg-[color-mix(in_oklab,var(--ink)_7%,var(--canvas))] p-4 xl:p-5"
+            >
+              <h3 className="text-base leading-snug font-medium xl:text-lg">
+                {card.title}
+              </h3>
+              <ul className="mt-3 list-disc space-y-2 pl-[1.1em]">
+                {card.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
       ) : (
         <div className="flex flex-col gap-4 xl:gap-5">
           {copyBlocks(paragraphs)}

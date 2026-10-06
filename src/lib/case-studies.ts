@@ -13,6 +13,8 @@ export type CaseStudyShot = {
   width?: number;
   height?: number;
   kind?: "image" | "video" | "placeholder";
+  /** Live page this still can open, full screen. */
+  live?: string;
   /** Small line under the shot. A href makes it a credit that opens in a new tab. */
   caption?: {
     label: string;
@@ -48,6 +50,8 @@ export type CaseStudySection = {
   after?: CaseStudyParagraph | CaseStudyParagraph[];
   /** A second bullet list, after `after`. */
   afterList?: CaseStudyParagraph[];
+  /** A grid of titled cards, used when a section is a set of notes rather than prose. */
+  cards?: Array<{ title: string; points: string[] }>;
   /** Sit the copy between the hero still and the hero clip. Shots stay after. */
   beforeClip?: boolean;
   /** Screenshots below the copy. A nested array is a row of shots. */
@@ -70,26 +74,14 @@ export type CaseStudyGuide = {
   blocks: CaseStudyGuideBlock[];
 };
 
-/** Named separately because a case study reuses its shots across sections. */
-function placeholderShot(alt: string, caption: string): CaseStudyShot {
-  return {
-    src: `placeholder:${caption}`,
-    alt,
-    width: 1600,
-    height: 1000,
-    kind: "placeholder",
-    caption: { label: caption },
-  };
-}
-
 const shots = {
   strategyTablet: {
-    src: "/images/strategy-collection-tablet.webp",
-    alt: "A tablet on a wooden desk showing a Strategic Intelligence briefing, with a keyboard and pencil beside it.",
-    width: 3272,
-    height: 2454,
-    maxHeight: 1100,
-    objectPosition: "bottom",
+    src: "/images/strategy-collection-tablet-1.mp4",
+    alt: "A film of a tablet on a wooden desk showing a Strategic Intelligence briefing, with a keyboard and pencil beside it.",
+    width: 2560,
+    height: 1920,
+    kind: "video",
+    maxHeight: 900,
     caption: { label: "The briefing, as it would sit with a leader." },
   },
   strategyBriefingStand: {
@@ -146,51 +138,39 @@ const shots = {
   strategyBriefingStable: {
     src: "/images/strategy-collection-briefing-stable.mp4",
     alt: "A film of a curated briefing for Olivia, titled Fill 12 open positions to unblock two focus areas, with insight cards and a Rovo prompt.",
-    width: 3432,
+    width: 3840,
     height: 2160,
     kind: "video",
     caption: { label: "Rovo trust, discovery, and action" },
   },
   strategyMcp: {
-    src: "/images/strategy-collection-mcp.mp4",
+    src: "/images/strategy-collection-mcp-1.mp4",
     alt: "A film of a Cursor session writing a weekly briefing prompt with Atlassian Rovo MCP tools.",
-    width: 3424,
+    width: 3840,
     height: 2160,
     kind: "video",
     caption: {
       label: "Headless expression of the briefing with our MCP",
     },
   },
-  strategyViews: {
-    src: "/images/strategy-collection-views.mp4",
-    alt: "A film of creating a view in the briefing, rolling up everything at risk across Strategy Collection and Talent.",
-    width: 3428,
+  strategyMcpContinued: {
+    src: "/images/strategy-collection-mcp-2.mp4",
+    alt: "A film of a Cursor session writing a weekly briefing prompt with Atlassian Rovo MCP tools.",
+    width: 3840,
     height: 2160,
     kind: "video",
     caption: {
-      label: "Extension of the experience to create custom views of data",
+      label: "Headless expression of the briefing with our MCP",
     },
   },
-  strategyWorkInsight: placeholderShot(
-    "Placeholder for the insight-card hierarchy.",
-    "Insight cards: Cause-first hierarchy and progressive disclosure, so leaders see why before what.",
-  ),
-  strategyWorkSurfaces: placeholderShot(
-    "Placeholder for the three-surface architecture: Inbox, Dashboard, and Report.",
-    "Three-surface architecture: Inbox to act, Dashboard to review, Report to share.",
-  ),
-  strategyWorkViz: placeholderShot(
-    "Placeholder for the three data-visualization primitives: sparkline, progress bar, and donut.",
-    "Data visualization system: Collapsed to three primitives (sparkline, progress bar, donut) with deterministic rules engineers could build without ambiguity.",
-  ),
-  strategyWorkVerify: placeholderShot(
-    "Placeholder for human-in-the-loop verification.",
-    "Human-in-the-loop verification: Owner-gated and open verification models, so AI output earns trust before it reaches an executive.",
-  ),
-  strategyWorkSkills: placeholderShot(
-    "Placeholder for briefing skills that generate executive summaries.",
-    "Briefing skills: I wrote and designed the skills that generate summaries in an executive’s voice.",
-  ),
+  strategyForYouLive: {
+    src: "/images/strategy-collection-for-you-page.png",
+    alt: "The Focus For you page, with a curated briefing across eight focus areas and insight cards.",
+    width: 1808,
+    height: 1031,
+    live: "/prototypes/focus-for-you/index.html#/for-you",
+    caption: { label: "The For you page." },
+  },
   strategyForYou: {
     src: "/images/strategy-collection-for-you.webp",
     alt: "The Strategic Intelligence For you page, with focus-area status cards, an activity feed, and critique notes around the layout.",
@@ -246,10 +226,10 @@ const shots = {
     },
   },
   postOfficeHero: {
-    src: "/images/post-office-desk.webp",
+    src: "/images/post-office-hero.png",
     alt: "A laptop on a wooden cabinet showing Atlassian Home, with Getting started cards, Frequently visited, and a vase beside it.",
-    width: 3272,
-    height: 2454,
+    width: 6000,
+    height: 4500,
     maxHeight: 900,
     caption: { label: "A friendly spotlight welcoming you home." },
   },
@@ -352,10 +332,10 @@ const shots = {
     },
   },
   campaignHero: {
-    src: "/images/campaign-manager-desk.webp",
+    src: "/images/campaign-manager-hero.png",
     alt: "A laptop on a wooden cabinet showing Instacart Brand overview, with spend and sales performance over the last 90 days.",
-    width: 3272,
-    height: 2454,
+    width: 6000,
+    height: 4500,
     maxHeight: 900,
     caption: { label: "Brand overview, as a retailer would see it." },
   },
@@ -500,7 +480,7 @@ export const caseStudies: CaseStudy[] = [
     company: "Atlassian",
     summary:
       "Setting design direction on Strategic Intelligence at Atlassian: an agent-first decision partner grounded in the teamwork graph.",
-    image: "/images/strategy-collection-hero.webp",
+    image: "/images/strategy-collection-tablet-1.mp4",
     mark: AtlassianMark,
     tint: "bg-tile-strategy",
     palette: "palette-strategy-collection",
@@ -727,16 +707,53 @@ export const caseStudies: CaseStudy[] = [
             rest: "Tying the design to the business model gave leadership a reason to back it beyond the UX.",
           },
         ],
-        images: [shots.strategyBriefingStable, shots.strategyMcp],
+        images: [
+          shots.strategyBriefingStable,
+          shots.strategyMcp,
+          shots.strategyMcpContinued,
+        ],
+      },
+      {
+        images: [shots.strategyForYouLive],
       },
       {
         label: "The work",
-        images: [
-          shots.strategyWorkInsight,
-          shots.strategyWorkSurfaces,
-          shots.strategyWorkViz,
-          shots.strategyWorkVerify,
-          shots.strategyWorkSkills,
+        cards: [
+          {
+            title: "AI summary",
+            points: [
+              "A daily pulse on the left side of the page: what’s off track and what’s going well, with explanations and evidence behind each point.",
+              "Leaders can use Rovo to dig into an issue and decide what to do about it, right from the summary.",
+              "I worked with content design to build the skills that structure each summary.",
+              "Leaders can pick an out-of-the-box format or create their own.",
+            ],
+          },
+          {
+            title: "Insight feed",
+            points: [
+              "A feed on the right side of the page mixes out-of-the-box insights with ones leaders create themselves.",
+              "Skills structure each insight so it’s easy to scan, even when the underlying AI output varies.",
+              "Each insight has a contextual action powered by Rovo. Leaders can change that action or ask their own question about the insight.",
+              "This was a new pattern at Atlassian. I drove its adoption across our product space and other teams at Atlassian.",
+              "It drives usage, which matters because Atlassian now charges by usage: more Rovo use means more revenue.",
+            ],
+          },
+          {
+            title: "Updates and dashboards",
+            points: [
+              "Organization updates are distilled into a few lines. Leaders can open the raw update and the connected updates it was built from.",
+              "As design lead, I set the direction for updates, then guided three designers to refine and execute it.",
+              "The feed also surfaces the latest changes in your dashboards and open work from across the Teamwork Collection.",
+            ],
+          },
+          {
+            title: "Create an insight from a single prompt",
+            points: [
+              "Leaders name an insight, set its goal, choose the sources it pulls from, and preview it before adding it to their feed.",
+              "Insights refresh daily and update within a session when the underlying data changes. They keep monitoring until the leader turns them off or changes them.",
+              "This is a new pattern for our collection, and I drove it as a core pattern for our teams to build on.",
+            ],
+          },
         ],
       },
       {
@@ -767,7 +784,6 @@ export const caseStudies: CaseStudy[] = [
             rest: "In a morning I can build out entire feature sets and logic to get feedback on, then scaffold and build the prototype that afternoon. Figma is saved for the moments that need a steady hand.",
           },
         ],
-        images: [shots.strategyViews],
       },
       {
         label: "Outcomes",
@@ -804,7 +820,7 @@ export const caseStudies: CaseStudy[] = [
     company: "Atlassian",
     summary:
       "Leading Courier, Post Office’s pattern library at Atlassian, and shipping @atlaskit/spotlight to unify in-product messaging.",
-    image: "/images/post-office-hero.webp",
+    image: "/images/post-office-hero.png",
     mark: AtlassianMark,
     tint: "bg-tile-post-office",
     palette: "palette-post-office",
@@ -1137,7 +1153,7 @@ export const caseStudies: CaseStudy[] = [
     company: "Instacart",
     summary:
       "A self-serve campaign builder for Instacart retailers that grew to $192M in gross merchandising value with 100% retailer adoption.",
-    image: "/images/campaign-manager-hero.webp",
+    image: "/images/campaign-manager-hero.png",
     mark: CampaignManagerMark,
     tint: "bg-tile-campaign",
     palette: "palette-campaign-manager",
@@ -1512,6 +1528,10 @@ function appendSectionCopy(
   }
   if (section.afterList) {
     blocks.push({ kind: "bullets", items: section.afterList });
+  }
+  for (const card of section.cards ?? []) {
+    blocks.push({ kind: "copy", lead: card.title, rest: "" });
+    blocks.push({ kind: "bullets", items: card.points });
   }
 }
 

@@ -489,7 +489,8 @@ html:has([data-case-study="campaign-manager"]) {
      click on the dialog itself; the panel inside is the card. UA chrome is
      reset, then the canvas, radius, and stagger-like entrance take over. */
   .password-dialog,
-  .shot-dialog {
+  .shot-dialog,
+  .live-prototype {
     width: 100%;
     max-width: none;
     height: 100%;
@@ -506,7 +507,8 @@ html:has([data-case-study="campaign-manager"]) {
   }
 
   .password-dialog:focus,
-  .shot-dialog:focus {
+  .shot-dialog:focus,
+  .live-prototype:focus {
     outline: none;
   }
 
@@ -1243,7 +1245,23 @@ html:has([data-case-study="campaign-manager"]) {
 
 /* Unlayered so it beats the control's opacity utility. The button is fixed
    and would otherwise sit on top of the dimmed field. */
-html:has(.shot-dialog[open]) {
+.live-prototype {
+  padding: 0;
+  background: #efeeeb;
+}
+
+.live-prototype::backdrop,
+.live-prototype iframe {
+  background: #efeeeb;
+}
+
+.live-prototype-close {
+  background: #e4e2de;
+  color: #8a8682;
+}
+
+html:has(.shot-dialog[open]),
+html:has(.live-prototype[open]) {
   overflow: hidden;
   /* The page reserves a classic-scrollbar gutter so the layout does not jump
      when overflow is locked. That strip sits on the right of the lightbox

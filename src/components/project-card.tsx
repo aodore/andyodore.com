@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CardFilm } from "@/components/card-film";
 import { PasswordBadge } from "@/components/password-badge";
 import { WorkLink } from "@/components/work-link";
 import { WorkLozenges } from "@/components/work-lozenges";
@@ -20,21 +21,25 @@ export function ProjectCard({
       <figure
         className={`relative isolate aspect-[535/700] overflow-hidden rounded-3xl ${tint}`}
       >
-        <Image
-          src={image}
-          // The caption names the project, so the photo adds nothing to read out.
-          alt=""
-          fill
-          sizes="(min-width: 1728px) 535px, (min-width: 1024px) 33vw, 100vw"
-          priority={priority}
-          // All three cards are inside the initial viewport from `lg` up, so the
-          // other two load without waiting but without competing for preload.
-          loading={priority ? undefined : "eager"}
-          // Same as the case-study shots: Next's optimizer was recompressing
-          // the card photos and softening the type on the screens.
-          unoptimized
-          className="object-cover object-center motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.03]"
-        />
+        {image.endsWith(".mp4") ? (
+          <CardFilm src={image} priority={priority} />
+        ) : (
+          <Image
+            src={image}
+            // The caption names the project, so the photo adds nothing to read out.
+            alt=""
+            fill
+            sizes="(min-width: 1728px) 535px, (min-width: 1024px) 33vw, 100vw"
+            priority={priority}
+            // All three cards are inside the initial viewport from `lg` up, so the
+            // other two load without waiting but without competing for preload.
+            loading={priority ? undefined : "eager"}
+            // Same as the case-study shots: Next's optimizer was recompressing
+            // the card photos and softening the type on the screens.
+            unoptimized
+            className="object-cover object-center motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.03]"
+          />
+        )}
         {isGatedWorkSlug(study.slug) && <PasswordBadge />}
         <div
           aria-hidden

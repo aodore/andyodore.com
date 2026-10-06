@@ -11,16 +11,18 @@ import {
   useState,
   type ComponentProps,
 } from "react";
-import { ArrowUpRightIcon, CloseIcon, ImageIcon, PresentationIcon, SidebarIcon, TalkIcon } from "@/components/brand";
+import { ArrowUpRightIcon, CloseIcon, ExpandIcon, ImageIcon, PresentationIcon, SidebarIcon, TalkIcon } from "@/components/brand";
 import type { CaseStudyGuide, CaseStudyGuideBlock, CaseStudyShot } from "@/lib/case-studies";
 import { TALK_CHANNEL, readTalkMessage } from "@/lib/talk-sync";
 const OpenShot = createContext<{
   openAt: (index: number, origin?: OpenOrigin) => void;
   jumpTo: (index: number) => void;
+  openLive: (src: string) => void;
   openIndex: number | null;
 }>({
   openAt: () => {},
   jumpTo: () => {},
+  openLive: () => {},
   openIndex: null,
 });
 
@@ -105,7 +107,10 @@ export function ShotLightbox({
   children: React.ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const liveDialog = useRef<HTMLDialogElement>(null);
+  const sawFullscreen = useRef(false);
   const [index, setIndex] = useState<number | null>(null);
+  const [liveSrc, setLiveSrc] = useState<string | null>(null);
   const [field, setField] = useState<ShotField | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [leaving, setLeaving] = useState<ShotTransit | null>(null);
@@ -325,6 +330,41 @@ export function ShotLightbox({
     pendingField.current = next;
   }
 
+  function openLive(src: string) {
+    setLiveSrc(src);
+    const node = liveDialog.current;
+    if (!node) return;
+    if (!node.open) node.showModal();
+    void node.requestFullscreen?.().then(() => {
+      sawFullscreen.current = true;
+    }).catch(() => {});
+  }
+
+  function closeLive() {
+    sawFullscreen.current = false;
+    const node = liveDialog.current;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    if (node?.open) node.close();
+    setLiveSrc(null);
+  }
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      if (document.fullscreenElement === liveDialog.current) {
+        sawFullscreen.current = true;
+        return;
+      }
+      if (!sawFullscreen.current) return;
+      sawFullscreen.current = false;
+      const node = liveDialog.current;
+      if (node?.open) node.close();
+      setLiveSrc(null);
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
   function openTalkWindow() {
     if (!talkSlug) return;
     setNotesOpen(false);
@@ -355,6 +395,7 @@ export function ShotLightbox({
       value={{
         openAt,
         jumpTo,
+        openLive,
         openIndex:
           presence === "exit-image" || presence === "closed" ? null : index,
       }}
@@ -378,6 +419,7 @@ export function ShotLightbox({
         }
         onCancel={(event) => {
           event.preventDefault();
+          if (liveSrc) return;
           if (notesOpen && window.matchMedia("(min-width: 768px)").matches) {
             setNotesOpen(false);
             return;
@@ -393,6 +435,7 @@ export function ShotLightbox({
           requestClose();
         }}
         onKeyDown={(event) => {
+          if (liveSrc) return;
           if (event.key === "ArrowRight") {
             event.preventDefault();
             step(1);
@@ -427,8 +470,34 @@ export function ShotLightbox({
             onField={applyField}
             onSlideEnd={endSlide}
             onOpenTalk={talkSlug ? openTalkWindow : undefined}
+            onOpenLive={shot.live ? () => openLive(shot.live!) : undefined}
           />
         )}
+      </dialog>
+      <dialog
+        ref={liveDialog}
+        className="live-prototype"
+        aria-label="Live prototype"
+        onCancel={(event) => {
+          event.preventDefault();
+          closeLive();
+        }}
+      >
+        {liveSrc && (
+          <iframe
+            src={liveSrc}
+            title="Live prototype"
+            className="block h-full w-full"
+          />
+        )}
+        <button
+          type="button"
+          onClick={closeLive}
+          aria-label="Close live prototype"
+          className="shot-dialog-control live-prototype-close absolute top-[60px] right-4 z-10"
+        >
+          <CloseIcon className="size-4" />
+        </button>
       </dialog>
     </OpenShot.Provider>
   );
@@ -479,7 +548,7 @@ export function ShotTrigger({
   shot: CaseStudyShot;
   index: number;
 }) {
-  const { openAt, openIndex } = useContext(OpenShot);
+  const { openAt, openIndex, openLive } = useContext(OpenShot);
   const video = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
   const open = openIndex === index;
@@ -520,7 +589,19 @@ export function ShotTrigger({
             loop
             playsInline
             preload="metadata"
-            className="shot-clip h-auto w-full cursor-zoom-in"
+            className={
+              shot.maxHeight
+                ? "shot-clip h-auto w-full cursor-zoom-in object-cover"
+                : "shot-clip h-auto w-full cursor-zoom-in"
+            }
+            style={
+              shot.maxHeight
+                ? {
+                    maxHeight: shot.maxHeight,
+                    objectPosition: shot.objectPosition ?? "center",
+                  }
+                : undefined
+            }
             aria-label={`View film ${index + 1}: ${shot.alt}`}
             onClick={(event) => openFrom(event.currentTarget)}
           />
@@ -550,7 +631,7 @@ export function ShotTrigger({
     <figure
       className={`t-stagger-line${open ? " invisible" : ""}`}
     >
-      <div className="overflow-hidden rounded-3xl">
+      <div className="relative overflow-hidden rounded-3xl">
         <button
           type="button"
           aria-label={`View image ${index + 1}: ${shot.alt}`}
@@ -574,6 +655,20 @@ export function ShotTrigger({
             }
           />
         </button>
+        {shot.live && (
+          <button
+            type="button"
+            aria-label="Open live prototype"
+            className="bg-accent absolute bottom-4 left-4 z-10 inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-[13px] leading-none font-light text-[var(--espresso)]"
+            onClick={(event) => {
+              event.stopPropagation();
+              openLive(shot.live!);
+            }}
+          >
+            <ExpandIcon className="size-3.5" />
+            Open live
+          </button>
+        )}
       </div>
       <ShotCaption shot={shot} />
     </figure>
@@ -630,6 +725,7 @@ function ShotImage({
         playsInline
         controls
         className={["shot-clip", className].filter(Boolean).join(" ")}
+        style={rest.style}
         aria-label={shot.alt}
         onLoadedData={(event) => onReady?.(event.currentTarget)}
       />
@@ -696,6 +792,7 @@ function ShotFrame({
   onField,
   onSlideEnd,
   onOpenTalk,
+  onOpenLive,
 }: {
   shot: CaseStudyShot;
   index: number;
@@ -713,6 +810,7 @@ function ShotFrame({
   onField: (field: ShotField) => void;
   onSlideEnd: () => void;
   onOpenTalk?: () => void;
+  onOpenLive?: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
   const pointer = useRef<{
@@ -836,8 +934,24 @@ function ShotFrame({
         onClick={closeFromField}
       >
         <div className="shot-chrome pointer-events-none relative z-20 flex shrink-0 justify-end px-4 pt-4 pb-2 md:px-6 md:pt-6">
-          <div className="pointer-events-auto flex items-center gap-10 md:gap-12">
+            <div className="pointer-events-auto flex items-center gap-10 md:gap-12">
             <div className="flex items-center gap-3">
+              {onOpenLive && (
+                <button
+                  type="button"
+                  onClick={onOpenLive}
+                  aria-label="Open live prototype"
+                  className="shot-dialog-control group relative mr-1"
+                >
+                  <ExpandIcon className="size-4" />
+                  <span
+                    aria-hidden
+                    className="bg-ink text-canvas pointer-events-none absolute top-full left-1/2 z-10 mt-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  >
+                    Open live
+                  </span>
+                </button>
+              )}
               {shot.caption?.href && (
                 <a
                   href={shot.caption.href}
@@ -1323,7 +1437,12 @@ function sampleImageField(
   }
   if (!best) return null;
 
-  return `rgb(${Math.round(best.r / best.n)} ${Math.round(best.g / best.n)} ${Math.round(best.b / best.n)})`;
+  const r = Math.round(best.r / best.n);
+  const g = Math.round(best.g / best.n);
+  const b = Math.round(best.b / best.n);
+  // A white field disappears behind a white shot. A light gray keeps the edge.
+  if (r >= 242 && g >= 242 && b >= 242) return "#efeeeb";
+  return `rgb(${r} ${g} ${b})`;
 }
 
 function chromeOn(background: string) {

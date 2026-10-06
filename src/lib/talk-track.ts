@@ -8,7 +8,7 @@ export type TalkCue = {
 
 const campaignManager: TalkCue[] = [
   {
-    src: "/images/campaign-manager-desk.webp",
+    src: "/images/campaign-manager-hero.png",
     title: "Brand overview on the laptop",
     onScreen: "the hero shot, a laptop showing the retailer's brand overview.",
     paragraphs: [
@@ -143,7 +143,7 @@ const campaignManager: TalkCue[] = [
 
 const postOffice: TalkCue[] = [
   {
-    src: "/images/post-office-desk.webp",
+    src: "/images/post-office-hero.png",
     title: "A spotlight on Atlassian Home",
     onScreen: "a laptop showing Atlassian Home, with a spotlight welcoming you in.",
     paragraphs: [
@@ -273,9 +273,184 @@ const postOffice: TalkCue[] = [
   },
 ];
 
+const strategicIntelligence: TalkCue[] = [
+  {
+    src: "/images/strategy-collection-tablet-1.mp4",
+    title: "The briefing on a tablet",
+    onScreen:
+      "a film of a tablet on a desk showing a Strategic Intelligence briefing.",
+    paragraphs: [
+      "This is what I’m working on right now at Atlassian. It’s called Strategic Intelligence, and what you’re watching is the briefing as it would sit with a leader at the start of their day. It tells them what’s off track, what’s going well, and where to go next.",
+      "I’m the lead product designer, and the only designer on it. I own the design direction and execution, and I co-wrote the product strategy with our Head of Product. I work with a PM, engineering leadership, six engineers, and our strategy and business ops team, and the CEO sees this work directly. We started in January 2026, shared V1 at TEAM ’26 in May, and V2 is ready for TEAM EU in October.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-clip.mp4",
+    title: "What is the Strategy Collection?",
+    onScreen: "the Strategy Collection film, opening on a chess pawn and rook.",
+    paragraphs: [
+      "Strategic Intelligence lives in Atlassian’s Strategy Collection, alongside Focus, Talent, and Align. The collection is how Atlassian moves up from the tools teams use every day to the decisions leaders make about where to invest.",
+      "When we started in January, the collection was in trouble. The product was pre-product-market fit, the founder had serious doubts about the direction, and without a breakthrough, the collection was on life support.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-personas.webp",
+    title: "Three audiences",
+    onScreen:
+      "three persona cards for Bradley, Brian, and Olivia, each with a sticky-note job statement.",
+    paragraphs: [
+      "Strategic Intelligence serves three people. Bradley is the executive who makes the call. Brian is the buyer who signs the check. Olivia is the operations leader who does the work in the tool every day. Each one wants something different, from a trustworthy pulse on the portfolio to a unified platform to a way to connect daily work back to strategy.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-job.webp",
+    title: "Bradley’s job to be done",
+    onScreen: "Bradley’s card with his job to be done.",
+    paragraphs: [
+      "We designed for Bradley first. His job is to continuously capture an accurate pulse of how the business is executing, so he can make confident decisions and change course without waiting on outdated slide decks or manual updates.",
+      "Executives were steering on stale decks, while the real signal sat in Jira and Confluence. Traditional portfolio tools like Planview and ServiceNow run on manual entry and PMO overhead, and turning thousands of issues into an executive view took analyst teams weeks. By the time it reached a leader, it was already out of date.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-moodboard.webp",
+    title: "The moodboard",
+    onScreen:
+      "a moodboard of dashboards, product launches, sleep tracking, JARVIS-style overlays, and other interfaces.",
+    paragraphs: [
+      "The timing was right for a few reasons. Atlassian already owns the execution layer, since more than 300,000 organizations run their work in Jira and Confluence, and the Teamwork Graph connects all of it. Generative AI had collapsed weeks of synthesis into seconds, as long as it had the right context. And customers were ready. By late 2025, nearly a third of our top 200 Cloud customers had passed 25 percent AI adoption.",
+      "This moodboard is where I started. I pulled from dashboards, product launches, sleep trackers, and sci-fi overlays, anything that took a lot of data and made it feel personal and easy to read. Early on, I also drafted requirements with our PM in tandem with these explorations, so the strategy and the design moved together.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-for-you.webp",
+    title: "V0’s For you page",
+    onScreen:
+      "the V0 For you page, with focus-area status cards, an activity feed, and critique notes around it.",
+    paragraphs: [
+      "This is V0, with my critique notes around it. It was an activity feed. It told you what happened across your focus areas, but it gave you no insight and no next step. A leader had to do all the interpreting themselves.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-phones.webp",
+    title: "An AI-native prototype",
+    onScreen:
+      "four phone screens showing a score of 54, a weekly trend, a Rovo chat, and a generated briefing.",
+    paragraphs: [
+      "At the same time, the industry was moving toward AI-generated briefings that don’t depend on a dashboard at all. Nobody asked me to chase that, but I thought we had to. So I prototyped what it could look like: a single score for your portfolio, a weekly trend, a chat with Rovo, and a briefing written for you. It was rough, but it showed where I wanted us to go.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-snapshot.webp",
+    title: "V1’s snapshot",
+    onScreen:
+      "a strategic snapshot for Olivia, with 29 of 40 focus areas needing attention.",
+    paragraphs: [
+      "V1 moved part of the way there. It was a smarter landing page that led with an AI summary of focus-area health and sprinkled more summaries through a traditional layout. We shared it at TEAM ’26 in May.",
+      "Then we listened. Customers found it overwhelming, and they doubted where the data came from. Internal users said the same thing, and gaps in the data made it worse. Here, 29 of 40 focus areas need attention, and nothing tells a leader which ones matter.",
+      "So I reframed the problem. Leaders needed a briefing that tells them what matters, why it matters, and where to go next.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-briefing-stand.webp",
+    title: "Exploration 1: AI summary first",
+    onScreen:
+      "a briefing for Veronica, with a Rovo summary of lagging focus areas, insight cards, and stacked dashboards.",
+    paragraphs: [
+      "This led to the first big decision. With the CEO watching this closely, a second miss would have cost far more than a week. So instead of polishing V1, I asked for one week to rethink the whole experience. That made people across the org nervous, so I took it to our Head of Design, who backed the time.",
+      "These next three screens are from that week. In this first one, the AI summary leads the page, and the insights and dashboards stack beneath it.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-briefing-headline.webp",
+    title: "Exploration 2: tighter content with stacked cards",
+    onScreen:
+      "a briefing titled “ARR on track, three areas behind,” with insights, latest updates, and a What’s next list.",
+    paragraphs: [
+      "In the second, I tightened the content. The headline does the work, “ARR on track, three areas behind,” and stacked cards carry the insights, updates, and what’s next.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-briefing-weekly.webp",
+    title: "Exploration 3: more brand and common components",
+    onScreen:
+      "a weekly briefing with a yellow header, insight cards, dashboard tiles, and a What’s next timeline.",
+    paragraphs: [
+      "In the third, I brought in more color from the new brand and leaned on components teams already knew. We were going through a rebrand at the same time, so every exploration had to work with a brand that was still taking shape.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-agent-split.webp",
+    title: "The dual-panel layout",
+    onScreen:
+      "an agent-first briefing with a large ARR on track headline, suggested prompts, and insight cards with charts.",
+    paragraphs: [
+      "The first exploration won, and it led to the second big decision. We split the page into two columns. The AI briefing sits on the left, and the evidence sits on the right: insights, updates, dashboards, and recent activity.",
+      "That answered both of V1’s problems. Leaders read one clear story first, which fixed the overload. And when they doubt it, the source is right next to it, which addressed the trust problem. The trade-off was density. Putting the summary front and center replaced V1’s item-by-item health readout with something more editorial. This was the direction that changed the founder’s mind.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-agent-dark.webp",
+    title: "More brand expression",
+    onScreen:
+      "a dark briefing canvas with floating cards for new insights, items to pick back up, updated dashboards, and recent updates.",
+    paragraphs: [
+      "From there, I pushed the brand further and explored deeper views for each section of the right column, like new insights, things to pick back up, and dashboards that changed since you last looked.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-agent-board.webp",
+    title: "Stacked cards with Rovo",
+    onScreen:
+      "a light briefing board with cards for insights, updates, and dashboards around the ARR on track headline.",
+    paragraphs: [
+      "This version brings it together: the stacked cards, the brand expression, and Rovo built into the page instead of off to the side.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-briefing-stable.mp4",
+    title: "Rovo trust, discovery, and action",
+    onScreen:
+      "a film of a curated briefing for Olivia, titled “Fill 12 open positions to unblock two focus areas,” with insight cards and a Rovo prompt.",
+    paragraphs: [
+      "The third decision was to make Rovo the way into everything. Each insight card became Rovo’s first message in a thread, with actions a leader can take right away, like “Message [Name] about [topic].” Insights only matter if leaders act on them. And since Atlassian moved to usage-based pricing, more Rovo use also means more revenue, which gave leadership a business reason to back the design.",
+      "The trade-off was that AI output isn’t predictable. Insights would vary from day to day, so we gave leaders controls to adjust them.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-mcp-1.mp4",
+    title: "The briefing in Cursor, through our MCP",
+    onScreen:
+      "a film of a Cursor session writing a weekly briefing prompt with Atlassian Rovo MCP tools.",
+    paragraphs: [
+      "We also shipped the briefing without our interface at all. This is the headless version, running through our MCP and shaped by a skill I wrote. A leader can pull the same briefing into whatever tool they already work in.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-mcp-2.mp4",
+    title: "The briefing, generated",
+    onScreen: "the same Cursor session, continuing.",
+    paragraphs: [
+      "Cursor is also where most of this product got designed. I started prototyping in Replit, onboarded other designers onto it, then moved to Cursor two months later and did the same. I used Claude Code and Rovo for early product definition, ideation, and the briefing skills themselves, and I ran prototypes on Teamwork Graph data, with mock data where we didn’t have it, so reviews felt like the real product. I still used Figma for polish and structure. It changed how I work. In a morning I can build out an entire feature set and its logic to get feedback on, then scaffold and build the prototype that afternoon.",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-for-you-page.png",
+    title: "The For you page",
+    onScreen:
+      "the Focus For you page, with a curated briefing across eight focus areas and insight cards.",
+    paragraphs: [
+      "And this is where it landed. On the left is the AI summary, a daily pulse on what’s off track and what’s going well, with the evidence behind each point. I worked with content design to build the skills that structure each summary, and leaders can pick a format we provide or create their own.",
+      "On the right is the feed. It mixes our insights with ones leaders create themselves, and each one has a Rovo action they can change or ask a question about. This was a new pattern at Atlassian, and I drove it across our product space and to other teams. The feed also distills organization updates into a few lines, with the raw update one click away. I set the direction for updates and guided three designers to refine and build it. And most recently, I designed a way to create an insight from a single prompt. You name it, set its goal, choose its sources, and preview it. It refreshes daily and keeps monitoring until you turn it off.",
+      "The CEO and Head of Product signed off, and both versions were featured in the founder’s keynotes, V1 at TEAM ’26 and V2 at TEAM EU. We have six pilot customers, a deliberately small group at this stage. This is now the direction for the whole Strategy Collection, and design leadership is pushing the format to other collections. They called it “pure magic.”",
+      "If I did it again, I’d push to get real data into the design sooner. I designed for content I couldn’t predict, but real data surprises you in ways mock data doesn’t. A brittle backend and no Teamwork Graph access in V1 made that hard, but I’d still push harder to test with real scenarios earlier.",
+    ],
+  },
+];
+
 const tracks: Record<string, TalkCue[]> = {
   "campaign-manager": campaignManager,
   "post-office": postOffice,
+  "strategic-intelligence": strategicIntelligence,
 };
 
 export function hasTalkTrack(slug: string) {
