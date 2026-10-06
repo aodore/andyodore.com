@@ -352,17 +352,17 @@ const strategicIntelligence: TalkCue[] = [
   },
   {
     src: "/images/strategy-collection-briefing-stand.webp",
-    title: "Exploration 1: AI summary first",
+    title: "Round one, exploration 1: AI summary first",
     onScreen:
       "a briefing for Veronica, with a Rovo summary of lagging focus areas, insight cards, and stacked dashboards.",
     paragraphs: [
       "This led to the first big decision. With the CEO watching this closely, a second miss would have cost far more than a week. So instead of polishing V1, I asked for one week to rethink the whole experience. That made people across the org nervous, so I took it to our Head of Design, who backed the time.",
-      "These next three screens are from that week. In this first one, the AI summary leads the page, and the insights and dashboards stack beneath it.",
+      "I ran two rounds of explorations in that time, each one followed by critique with the team and design leadership. The first round pulled on one thread: what if Rovo was the engine that summarized everything? In this first exploration, the AI summary leads the page, and the insights and dashboards stack beneath it.",
     ],
   },
   {
     src: "/images/strategy-collection-briefing-headline.webp",
-    title: "Exploration 2: tighter content with stacked cards",
+    title: "Round one, exploration 2: tighter content with stacked cards",
     onScreen:
       "a briefing titled “ARR on track, three areas behind,” with insights, latest updates, and a What’s next list.",
     paragraphs: [
@@ -371,77 +371,89 @@ const strategicIntelligence: TalkCue[] = [
   },
   {
     src: "/images/strategy-collection-briefing-weekly.webp",
-    title: "Exploration 3: more brand and common components",
+    title: "Round one, exploration 3: more brand and common components",
     onScreen:
       "a weekly briefing with a yellow header, insight cards, dashboard tiles, and a What’s next timeline.",
     paragraphs: [
       "In the third, I brought in more color from the new brand and leaned on components teams already knew. We were going through a rebrand at the same time, so every exploration had to work with a brand that was still taking shape.",
+      "We critiqued all three with the team and design leadership, and I took what we learned into a second round.",
     ],
   },
   {
     src: "/images/strategy-collection-agent-split.webp",
-    title: "The dual-panel layout",
+    title: "Round two, exploration 1: the dual-panel layout",
     onScreen:
       "an agent-first briefing with a large ARR on track headline, suggested prompts, and insight cards with charts.",
     paragraphs: [
-      "The first exploration won, and it led to the second big decision. We split the page into two columns. The AI briefing sits on the left, and the evidence sits on the right: insights, updates, dashboards, and recent activity.",
-      "That answered both of V1’s problems. Leaders read one clear story first, which fixed the overload. And when they doubt it, the source is right next to it, which addressed the trust problem. The trade-off was density. Putting the summary front and center replaced V1’s item-by-item health readout with something more editorial. This was the direction that changed the founder’s mind.",
+      "The second round had three directions too. The first split the page into two columns. The AI briefing sits on the left, with a big headline and suggested prompts for Rovo. The evidence sits on the right: insights, updates, dashboards, and recent activity.",
     ],
   },
   {
     src: "/images/strategy-collection-agent-dark.webp",
-    title: "More brand expression",
+    title: "Round two, exploration 2: more brand expression",
     onScreen:
       "a dark briefing canvas with floating cards for new insights, items to pick back up, updated dashboards, and recent updates.",
     paragraphs: [
-      "From there, I pushed the brand further and explored deeper views for each section of the right column, like new insights, things to pick back up, and dashboards that changed since you last looked.",
+      "The second pushed the brand much further, on a dark canvas, and explored deeper views for each section, like new insights, things to pick back up, and dashboards that changed since you last looked.",
     ],
   },
   {
     src: "/images/strategy-collection-agent-board.webp",
-    title: "Stacked cards with Rovo",
+    title: "Round two, exploration 3: stacked cards with Rovo",
     onScreen:
       "a light briefing board with cards for insights, updates, and dashboards around the ARR on track headline.",
     paragraphs: [
-      "This version brings it together: the stacked cards, the brand expression, and Rovo built into the page instead of off to the side.",
+      "The third combined the stacked cards from round one with the brand expression, and built Rovo into the page.",
+      "After another round of critique with the team and design leadership, we chose the dual-panel layout. It answered both of V1’s problems. Leaders read one clear story first, which fixed the overload. And when they doubt it, the source sits right next to it, which addressed the trust problem. The trade-off was density. Putting the summary front and center replaced V1’s item-by-item health readout with something more editorial. This was the direction that changed the founder’s mind.",
     ],
   },
   {
     src: "/images/strategy-collection-briefing-stable.mp4",
-    title: "Rovo trust, discovery, and action",
+    title: "Where we landed",
     onScreen:
       "a film of a curated briefing for Olivia, titled “Fill 12 open positions to unblock two focus areas,” with insight cards and a Rovo prompt.",
     paragraphs: [
-      "The third decision was to make Rovo the way into everything. Each insight card became Rovo’s first message in a thread, with actions a leader can take right away, like “Message [Name] about [topic].” Insights only matter if leaders act on them. And since Atlassian moved to usage-based pricing, more Rovo use also means more revenue, which gave leadership a business reason to back the design.",
-      "The trade-off was that AI output isn’t predictable. Insights would vary from day to day, so we gave leaders controls to adjust them.",
+      "This is where we landed. The briefing leads on the left with one clear headline, here “Fill 12 open positions to unblock two focus areas,” and the feed on the right backs it up.",
+      "The third big decision was to make Rovo the way into all of it. Each insight card opens a conversation with Rovo, with actions a leader can take right away, like “Message [Name] about [topic].” Insights only matter if leaders act on them. And since Atlassian moved to usage-based pricing, more Rovo use also means more revenue, which gave leadership a business reason to back the design. The trade-off was that AI output isn’t predictable, so we gave leaders controls to adjust their insights.",
     ],
   },
   {
     src: "/images/strategy-collection-mcp-1.mp4",
-    title: "The briefing in Cursor, through our MCP",
+    title: "The briefing without our interface",
     onScreen:
       "a film of a Cursor session writing a weekly briefing prompt with Atlassian Rovo MCP tools.",
     paragraphs: [
-      "We also shipped the briefing without our interface at all. This is the headless version, running through our MCP and shaped by a skill I wrote. A leader can pull the same briefing into whatever tool they already work in.",
+      "We also shipped a headless version, following the shift I mentioned earlier toward briefings that don’t depend on a dashboard. This is the same briefing running through our MCP, inside Cursor. A leader can pull it into whatever tool they already work in, without opening our product.",
     ],
   },
   {
     src: "/images/strategy-collection-mcp-2.mp4",
-    title: "The briefing, generated",
+    title: "The headless briefing, continued",
     onScreen: "the same Cursor session, continuing.",
     paragraphs: [
-      "Cursor is also where most of this product got designed. I started prototyping in Replit, onboarded other designers onto it, then moved to Cursor two months later and did the same. I used Claude Code and Rovo for early product definition, ideation, and the briefing skills themselves, and I ran prototypes on Teamwork Graph data, with mock data where we didn’t have it, so reviews felt like the real product. I still used Figma for polish and structure. It changed how I work. In a morning I can build out an entire feature set and its logic to get feedback on, then scaffold and build the prototype that afternoon.",
+      "Here the briefing comes back. A skill I wrote shapes it, so it follows the same structure leaders see in the product. Whether a leader opens our page or asks from their own tools, they get the same story about their portfolio.",
     ],
   },
   {
     src: "/images/strategy-collection-for-you-page.png",
-    title: "The For you page",
+    title: "Inside the For you page",
     onScreen:
       "the Focus For you page, with a curated briefing across eight focus areas and insight cards.",
     paragraphs: [
-      "And this is where it landed. On the left is the AI summary, a daily pulse on what’s off track and what’s going well, with the evidence behind each point. I worked with content design to build the skills that structure each summary, and leaders can pick a format we provide or create their own.",
-      "On the right is the feed. It mixes our insights with ones leaders create themselves, and each one has a Rovo action they can change or ask a question about. This was a new pattern at Atlassian, and I drove it across our product space and to other teams. The feed also distills organization updates into a few lines, with the raw update one click away. I set the direction for updates and guided three designers to refine and build it. And most recently, I designed a way to create an insight from a single prompt. You name it, set its goal, choose its sources, and preview it. It refreshes daily and keeps monitoring until you turn it off.",
+      "Let’s go through the experience in more detail, starting on the left with the AI summary. It’s a daily pulse on what’s off track and what’s going well, with an explanation and evidence behind each point, so a leader can use Rovo to dig into an issue and decide what to do about it. I worked with content design to build the skills that structure each summary, and leaders can pick a format we provide or create their own.",
+      "On the right is the feed. It mixes our insights with ones leaders create themselves. Skills structure each insight so it’s easy to scan, even when the AI output varies. Every insight has a Rovo action that leaders can change, or they can ask their own question about it. This was a new pattern at Atlassian, and I drove it across our product space and to other teams.",
+      "The feed also distills organization updates into a few lines, with the raw update and the updates it was built from one click away. As design lead, I set the direction for updates, then guided three designers to refine and build it. Below that, leaders see the latest changes in their dashboards and open work from across the Teamwork Collection.",
+      "Most recently, I designed a way to create an insight from a single prompt. A leader names it, sets its goal, chooses the sources it pulls from, and previews it before adding it to the feed. It refreshes daily, updates within a session when the data changes, and keeps monitoring until they turn it off. I drove this as a core pattern for teams across the collection.",
       "The CEO and Head of Product signed off, and both versions were featured in the founder’s keynotes, V1 at TEAM ’26 and V2 at TEAM EU. We have six pilot customers, a deliberately small group at this stage. This is now the direction for the whole Strategy Collection, and design leadership is pushing the format to other collections. They called it “pure magic.”",
+    ],
+  },
+  {
+    src: "/images/strategy-collection-cursor.png",
+    title: "My AI workflow",
+    onScreen:
+      "a Cursor window with the Focus For you prototype open beside a chat.",
+    paragraphs: [
+      "Cursor is where most of this product got designed. I started prototyping in Replit, onboarded other designers onto it, then moved to Cursor two months later and did the same. I used Claude Code and Rovo for early product definition, ideation, and the briefing skills themselves. I ran prototypes on Teamwork Graph data, with mock data where we didn’t have it, so reviews felt like the real product. I still used Figma for polish and structure. It changed how I work. In a morning I can build out an entire feature set and its logic to get feedback on, then scaffold and build the prototype that afternoon.",
       "If I did it again, I’d push to get real data into the design sooner. I designed for content I couldn’t predict, but real data surprises you in ways mock data doesn’t. A brittle backend and no Teamwork Graph access in V1 made that hard, but I’d still push harder to test with real scenarios earlier.",
     ],
   },

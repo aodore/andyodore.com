@@ -171,6 +171,12 @@ const shots = {
     live: "/prototypes/focus-for-you/index.html#/for-you",
     caption: { label: "The For you page." },
   },
+  strategyCursor: {
+    src: "/images/strategy-collection-cursor.png",
+    alt: "A Cursor window with the Focus For you prototype open beside a chat.",
+    width: 2103,
+    height: 1156,
+  },
   strategyForYou: {
     src: "/images/strategy-collection-for-you.webp",
     alt: "The Strategic Intelligence For you page, with focus-area status cards, an activity feed, and critique notes around the layout.",
@@ -784,6 +790,7 @@ export const caseStudies: CaseStudy[] = [
             rest: "In a morning I can build out entire feature sets and logic to get feedback on, then scaffold and build the prototype that afternoon. Figma is saved for the moments that need a steady hand.",
           },
         ],
+        images: [shots.strategyCursor],
       },
       {
         label: "Outcomes",
